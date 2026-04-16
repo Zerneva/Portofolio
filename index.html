@@ -1161,7 +1161,7 @@
             .hero-floating-card .card-label { font-size: 0.5rem; }
             .hero-floating-card .card-value { font-size: 0.7rem; }
  
-            .card-location { top: -20px; right: -70px; left: auto; bottom: auto; animation: none; transform: scale(0.75); }
+            .card-location { top: 5%; right: -70px; left: auto !important; bottom: auto; animation: none; transform: scale(0.75); }
             .card-stats { top: 50%; left: 5%; right: auto; bottom: auto; animation: none; }
  
             /* Profile card - clean, centered below photo */
@@ -1189,9 +1189,9 @@
             
             /* Enhanced Overlay Pills for Mobile */
             .expertise-pill { 
-                display: flex; 
+                display: flex !important; 
                 position: absolute;
-                width: max-content;
+                width: max-content !important;
                 white-space: nowrap;
                 transform: scale(0.7); 
                 padding: 6px 16px; 
@@ -1200,12 +1200,13 @@
                 backdrop-filter: blur(10px);
                 border: 1px solid rgba(255,255,255,0.5);
                 z-index: 25;
+                animation: none !important;
             }
             [data-theme="dark"] .expertise-pill { background: rgba(30,35,45,0.8); border-color: rgba(255,255,255,0.1); }
 
-            .pill-1 { top: 25%; left: -15px; right: auto; transform: rotate(-8deg) scale(0.7); }
-            .pill-2 { top: 65%; right: -25px; left: auto; transform: rotate(5deg) scale(0.7); }
-            .pill-3 { bottom: 8%; left: -5px; right: auto; transform: rotate(-3deg) scale(0.7); }
+            .pill-1 { top: 25%; left: -15px !important; right: auto !important; transform: rotate(-8deg) scale(0.7) !important; }
+            .pill-2 { top: 65%; right: -25px !important; left: auto !important; transform: rotate(5deg) scale(0.7) !important; }
+            .pill-3 { bottom: 8%; left: -5px !important; right: auto !important; transform: rotate(-3deg) scale(0.7) !important; }
             
             /* Restored & Visible Tech Icons */
             .tech-icon-bg { display: block; font-size: 2rem; opacity: 0.15; z-index: 1; }
