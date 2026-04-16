@@ -1139,15 +1139,15 @@
 
             /* === HERO VISUAL === */
             .hero-visual { 
-                padding: 20px 0 60px; 
+                padding: 20px 0 30px; 
                 width: 100%; 
                 margin-top: 20px; 
                 position: relative; 
-                overflow: hidden; /* Clips all overflow from pills, cards, bg-text */
+                overflow: visible; /* Allow cards to show outside */
             }
             .hero-bg-text { display: none; } /* Huge text causes overflow on mobile */
             
-            .me-photo-wrapper { max-width: 280px; margin: 0 auto; position: relative; }
+            .me-photo-wrapper { max-width: 280px; margin: 0 auto; position: relative; overflow: hidden; }
             
             /* Floating cards - small, clamped to safe bounds */
             .hero-floating-card { 
@@ -1164,28 +1164,29 @@
             .card-location { top: 5%; right: -70px; left: auto !important; bottom: auto; animation: none; transform: scale(0.75); }
             .card-stats { top: 50%; left: 5%; right: auto; bottom: auto; animation: none; }
  
-            /* Profile card - clean, centered below photo */
+            /* Profile card - clean, BELOW photo */
             .profile-card-integrated { 
                 position: relative; 
-                margin: -15px auto 0;
+                margin: 15px auto 0;
                 transform: none;
                 flex-direction: row; text-align: left;
-                width: 90%; max-width: 320px;
-                padding: 12px 16px;
+                width: 92%; max-width: 340px;
+                padding: 14px 18px;
                 border-radius: 22px;
-                gap: 12px;
+                gap: 14px;
                 z-index: 20;
-                box-shadow: var(--shadow-light);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+                border: 1px solid var(--border-color);
                 animation: none;
             }
             .profile-card-integrated:hover { transform: none; }
-            .profile-card-integrated img { width: 50px; height: 50px; border-radius: 14px; }
-            .profile-info h3 { font-size: 0.95rem; }
-            .profile-info h4 { font-size: 0.8rem; margin-bottom: 2px; }
-            .profile-info p { font-size: 0.72rem; margin-bottom: 6px; }
+            .profile-card-integrated img { width: 55px; height: 55px; border-radius: 16px; }
+            .profile-info h3 { font-size: 1.05rem; }
+            .profile-info h4 { font-size: 0.85rem; margin-bottom: 2px; }
+            .profile-info p { font-size: 0.75rem; margin-bottom: 6px; }
             .profile-info .badge { padding: 4px 10px; font-size: 0.6rem; }
             
-            .floating-social-integrated { right: 8px; top: -12px; width: 32px; height: 32px; font-size: 0.9rem; border-radius: 10px; }
+            .floating-social-integrated { right: 10px; top: -14px; width: 34px; height: 34px; font-size: 1rem; border-radius: 10px; }
             
             /* Enhanced Overlay Pills for Mobile */
             .expertise-pill { 
@@ -1271,7 +1272,40 @@
             .modal-body { padding: 25px; }
             .modal-body h2 { font-size: 1.5rem; }
             
-            .right-sidebar { display: none; } /* Hide right sidebar on mobile */
+            /* === RIGHT SIDEBAR → MOBILE BOTTOM BAR === */
+            .right-sidebar { 
+                display: flex !important;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: auto;
+                top: auto;
+                width: 100%;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                gap: 0;
+                padding: 10px 15px;
+                background: var(--card-white);
+                border-top: 1px solid var(--border-color);
+                box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+                transform: none;
+                z-index: 999;
+            }
+            .right-sidebar::before { display: none; } /* Remove vertical line */
+            .right-sidebar::after { display: none; } /* Remove top dot */
+            .right-sidebar-node { display: none; } /* Remove bottom dot */
+            .right-sidebar.hide { transform: none; opacity: 1; pointer-events: auto; }
+
+            .social-link-vert {
+                width: 40px; height: 40px;
+                font-size: 1rem;
+                border: none;
+            }
+
+            /* Add bottom padding to body for the bar */
+            .main-content { padding-bottom: 80px !important; }
+            .float-wa { bottom: 70px; } /* Move WA above the bar */
         }
 
         /* === EXTRA SMALL SCREENS (iPhone SE, 320px etc) === */
