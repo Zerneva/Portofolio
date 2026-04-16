@@ -1122,10 +1122,10 @@
             .hero-actions { justify-content: center; gap: 10px; }
             .btn { padding: 14px 28px; font-size: 0.95rem; }
 
-            .hero-visual { padding: 60px 0 120px; width: 100%; margin-top: 30px; position: relative; overflow: visible; }
-            .hero-bg-text { font-size: 25rem; top: 30%; opacity: 0.05; }
+            .hero-visual { padding: 30px 0 80px; width: 100%; margin-top: 30px; position: relative; }
+            .hero-bg-text { font-size: 25rem; top: 40%; opacity: 0.05; }
             
-            .me-photo-wrapper { max-width: 320px; margin: 0 auto; position: relative; left: -30px; }
+            .me-photo-wrapper { max-width: 320px; margin: 0 auto; position: relative; }
             
             .hero-floating-card { 
                 display: flex; 
@@ -1133,39 +1133,39 @@
                 gap: 8px;
                 border-radius: 15px;
                 width: max-content;
-                transform: scale(0.85);
+                transform: scale(0.9);
             }
             .hero-floating-card .card-icon { width: 28px; height: 28px; font-size: 0.9rem; border-radius: 8px; }
             .hero-floating-card .card-label { font-size: 0.55rem; }
             .hero-floating-card .card-value { font-size: 0.75rem; }
  
-            .card-location { top: -8%; right: -5%; left: auto; bottom: auto; transform: rotate(5deg) scale(0.85); }
-            .card-stats { top: 45%; left: -20%; right: auto; bottom: auto; transform: rotate(-5deg) scale(0.85); }
+            .card-location { top: -5%; right: 0; left: auto; bottom: auto; }
+            .card-stats { top: 60%; left: 0; right: auto; bottom: auto; }
  
             .profile-card-integrated { 
-                position: absolute; bottom: -20px; right: -5%;
-                transform: rotate(6deg);
+                position: relative; 
+                margin: -20px auto 0;
+                transform: rotate(2deg);
                 flex-direction: row; text-align: left;
-                width: 290px;
-                padding: 12px 15px;
-                border-radius: 20px;
-                gap: 12px;
+                width: 92%; max-width: 330px;
+                padding: 12px 18px;
+                border-radius: 25px;
+                gap: 15px;
                 z-index: 20;
-                box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-                border: 1px solid rgba(0,0,0,0.05);
+                box-shadow: var(--shadow-light);
             }
-            .profile-card-integrated img { width: 45px; height: 45px; border-radius: 12px; }
-            .profile-info h3 { font-size: 0.85rem; }
-            .profile-info h4 { font-size: 0.75rem; margin-bottom: 0px; }
-            .profile-info p { font-size: 0.7rem; margin-bottom: 4px; }
-            .profile-info .badge { padding: 3px 8px; font-size: 0.6rem; }
+            .profile-card-integrated img { width: 55px; height: 55px; border-radius: 15px; }
+            .profile-info h3 { font-size: 1rem; }
+            .profile-info h4 { font-size: 0.85rem; margin-bottom: 2px; }
+            .profile-info p { font-size: 0.75rem; margin-bottom: 8px; }
+            .profile-info .badge { padding: 4px 10px; font-size: 0.65rem; }
             
-            .floating-social-integrated { right: 8px; top: -15px; width: 32px; height: 32px; font-size: 0.85rem; border-radius: 10px; }
+            .floating-social-integrated { right: 10px; top: -15px; width: 35px; height: 35px; font-size: 1rem; border-radius: 10px; }
             
-            .expertise-pill { transform: scale(0.6); padding: 5px 12px; font-size: 0.65rem; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-            .pill-1 { top: 10%; left: -5%; transform: rotate(-12deg) scale(0.6); }
-            .pill-2 { top: 40%; right: -10%; transform: rotate(8deg) scale(0.6); }
-            .pill-3 { bottom: 15%; left: 0%; transform: rotate(-5deg) scale(0.6); }
+            .expertise-pill { transform: scale(0.7); padding: 5px 15px; font-size: 0.75rem; }
+            .pill-1 { top: 35%; left: -5%; transform: rotate(-8deg) scale(0.7); }
+            .pill-2 { top: 65%; right: -5%; transform: rotate(5deg) scale(0.7); }
+            .pill-3 { bottom: 5%; right: 5%; transform: rotate(-3deg) scale(0.7); }
             
             .tech-icon-bg { font-size: 1.5rem; }
             .rotating-badge { transform: scale(0.6); top: -40px; right: -20px; }
