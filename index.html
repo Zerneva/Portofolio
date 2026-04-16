@@ -1164,29 +1164,36 @@
             .card-location { top: 5%; right: -70px; left: auto !important; bottom: auto; animation: none; transform: scale(0.75); }
             .card-stats { top: 50%; left: 5%; right: auto; bottom: auto; animation: none; }
  
-            /* Profile card - clean, BELOW photo */
+            /* Profile card - clean, CENTERED BELOW photo */
             .profile-card-integrated { 
-                position: relative; 
-                margin: 15px auto 0;
-                transform: none;
-                flex-direction: row; text-align: left;
-                width: 92%; max-width: 340px;
-                padding: 14px 18px;
-                border-radius: 22px;
-                gap: 14px;
+                position: relative !important;
+                top: auto !important; right: auto !important; bottom: auto !important; left: auto !important;
+                margin: 20px auto 0 !important;
+                transform: none !important;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                width: 85%;
+                max-width: 300px;
+                padding: 20px 20px 16px;
+                border-radius: 25px;
+                gap: 10px;
                 z-index: 20;
                 box-shadow: 0 10px 30px rgba(0,0,0,0.08);
                 border: 1px solid var(--border-color);
-                animation: none;
+                animation: none !important;
+                background: var(--card-white);
             }
-            .profile-card-integrated:hover { transform: none; }
-            .profile-card-integrated img { width: 55px; height: 55px; border-radius: 16px; }
-            .profile-info h3 { font-size: 1.05rem; }
-            .profile-info h4 { font-size: 0.85rem; margin-bottom: 2px; }
-            .profile-info p { font-size: 0.75rem; margin-bottom: 6px; }
-            .profile-info .badge { padding: 4px 10px; font-size: 0.6rem; }
+            .profile-card-integrated:hover { transform: none !important; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+            .profile-card-integrated img { width: 60px; height: 60px; border-radius: 18px; }
+            .profile-info { text-align: center; }
+            .profile-info h3 { font-size: 1.1rem; }
+            .profile-info h4 { font-size: 0.9rem; margin-bottom: 3px; }
+            .profile-info p { font-size: 0.8rem; margin-bottom: 8px; }
+            .profile-info .badge { padding: 5px 12px; font-size: 0.65rem; }
             
-            .floating-social-integrated { right: 10px; top: -14px; width: 34px; height: 34px; font-size: 1rem; border-radius: 10px; }
+            .floating-social-integrated { right: 12px; top: -14px; width: 34px; height: 34px; font-size: 1rem; border-radius: 10px; }
             
             /* Enhanced Overlay Pills for Mobile */
             .expertise-pill { 
@@ -1316,7 +1323,11 @@
                 display: block;
             }
             .right-sidebar-node { display: none; }
-            .right-sidebar.hide { transform: none; opacity: 1; pointer-events: auto; }
+            .right-sidebar.hide { 
+                transform: translateY(150px) !important; 
+                opacity: 0 !important; 
+                pointer-events: none !important; 
+            }
 
             .social-link-vert {
                 width: 38px; height: 38px;
@@ -2030,8 +2041,8 @@
             }
         }, 5000);
 
-        // --- Intersection Observer for Right Sidebar ---
-        // Hide right sidebar when footer comes into view
+        // --- Intersection Observer for Right Sidebar / Mobile Bottom Bar ---
+        // Hide sidebar/bottom bar when footer comes into view
         const rightSidebar = document.getElementById('rightSidebar');
         const footerSection = document.getElementById('contact');
         
