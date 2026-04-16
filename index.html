@@ -1161,7 +1161,7 @@
             .hero-floating-card .card-label { font-size: 0.5rem; }
             .hero-floating-card .card-value { font-size: 0.7rem; }
  
-            .card-location { top: -20px; right: -40px; left: auto; bottom: auto; animation: none; transform: scale(0.75); }
+            .card-location { top: -20px; right: -70px; left: auto; bottom: auto; animation: none; transform: scale(0.75); }
             .card-stats { top: 50%; left: 5%; right: auto; bottom: auto; animation: none; }
  
             /* Profile card - clean, centered below photo */
@@ -1187,12 +1187,30 @@
             
             .floating-social-integrated { right: 8px; top: -12px; width: 32px; height: 32px; font-size: 0.9rem; border-radius: 10px; }
             
-            /* Pills - hidden on very small screens to reduce clutter */
-            .expertise-pill { display: none; }
+            /* Pills - restored as overlay elements */
+            .expertise-pill { 
+                display: flex; 
+                transform: scale(0.65); 
+                padding: 5px 15px; 
+                font-size: 0.7rem; 
+                background: rgba(255,255,255,0.7);
+                border: 1px solid rgba(255,255,255,0.4);
+            }
+            [data-theme="dark"] .expertise-pill { background: rgba(22,25,30,0.7); }
+
+            .pill-1 { top: 30%; left: -10px; transform: rotate(-8deg) scale(0.65); }
+            .pill-2 { top: 68%; right: -20px; transform: rotate(5deg) scale(0.65); }
+            .pill-3 { bottom: 10%; left: 0px; transform: rotate(-3deg) scale(0.65); }
             
-            /* Tech icons - smaller and safe */
-            .tech-icon-bg { display: none; }
-            .rotating-badge { display: none; }
+            /* Tech icons - restored smaller */
+            .tech-icon-bg { display: block; font-size: 1.4rem; opacity: 0.08; }
+            .tech-1 { top: 5%; left: 10%; }
+            .tech-2 { top: 80%; left: -5%; }
+            .tech-3 { top: 15%; right: 10%; }
+            .tech-4 { top: 85%; right: -5%; }
+
+            .rotating-badge { display: block; transform: scale(0.5); top: -60px; right: -30px; }
+            
             .scroll-indicator { display: none; }
             .card-achievement { display: none; }
             
