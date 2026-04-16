@@ -1187,29 +1187,34 @@
             
             .floating-social-integrated { right: 8px; top: -12px; width: 32px; height: 32px; font-size: 0.9rem; border-radius: 10px; }
             
-            /* Pills - restored as overlay elements */
+            /* Enhanced Overlay Pills for Mobile */
             .expertise-pill { 
                 display: flex; 
-                transform: scale(0.65); 
-                padding: 5px 15px; 
-                font-size: 0.7rem; 
-                background: rgba(255,255,255,0.7);
-                border: 1px solid rgba(255,255,255,0.4);
+                position: absolute;
+                width: max-content;
+                white-space: nowrap;
+                transform: scale(0.7); 
+                padding: 6px 16px; 
+                font-size: 0.75rem; 
+                background: rgba(255,255,255,0.8);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255,255,255,0.5);
+                z-index: 25;
             }
-            [data-theme="dark"] .expertise-pill { background: rgba(22,25,30,0.7); }
+            [data-theme="dark"] .expertise-pill { background: rgba(30,35,45,0.8); border-color: rgba(255,255,255,0.1); }
 
-            .pill-1 { top: 30%; left: -10px; transform: rotate(-8deg) scale(0.65); }
-            .pill-2 { top: 68%; right: -20px; transform: rotate(5deg) scale(0.65); }
-            .pill-3 { bottom: 10%; left: 0px; transform: rotate(-3deg) scale(0.65); }
+            .pill-1 { top: 25%; left: -15px; right: auto; transform: rotate(-8deg) scale(0.7); }
+            .pill-2 { top: 65%; right: -25px; left: auto; transform: rotate(5deg) scale(0.7); }
+            .pill-3 { bottom: 8%; left: -5px; right: auto; transform: rotate(-3deg) scale(0.7); }
             
-            /* Tech icons - restored smaller */
-            .tech-icon-bg { display: block; font-size: 1.4rem; opacity: 0.08; }
-            .tech-1 { top: 5%; left: 10%; }
-            .tech-2 { top: 80%; left: -5%; }
-            .tech-3 { top: 15%; right: 10%; }
-            .tech-4 { top: 85%; right: -5%; }
+            /* Restored & Visible Tech Icons */
+            .tech-icon-bg { display: block; font-size: 2rem; opacity: 0.15; z-index: 1; }
+            .tech-1 { top: 8%; left: 5%; }
+            .tech-2 { top: 75%; left: 0%; }
+            .tech-3 { top: 12%; right: 5%; }
+            .tech-4 { top: 82%; right: 0%; }
 
-            .rotating-badge { display: block; transform: scale(0.5); top: -60px; right: -30px; }
+            .rotating-badge { display: block; transform: scale(0.55); top: -55px; right: -25px; }
             
             .scroll-indicator { display: none; }
             .card-achievement { display: none; }
