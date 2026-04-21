@@ -20,6 +20,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
     
     <style>
         /* --- CSS Variables & Theming --- */
@@ -1134,33 +1135,44 @@
             .expertise-item:hover { transform: translateY(-3px); }
             .exp-icon { display: none; }
             
-            /* === INSTAGRAM & PINTEREST === */
-            .insta-container, .pinterest-container { padding: 20px; border-radius: 25px; margin-bottom: 50px; }
-            .insta-container.active, .pinterest-container.active { transform: none !important; } /* Fix sticky */
-            
-            .insta-header, .pint-header { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: 25px; }
-            .insta-header h2, .pint-header h2 { font-size: 1.8rem; }
-            
-            .insta-grid { grid-template-columns: 1fr; gap: 0; } /* Remove gap for cleaner stacking */
-            .insta-item { 
-                position: sticky; 
-                top: 100px; 
-                margin-bottom: 100px; /* Space to see the next card approach */
-                box-shadow: 0 -10px 30px rgba(0,0,0,0.15);
-                transition: transform 0.4s ease, opacity 0.4s ease, filter 0.4s ease;
-                z-index: 1;
+            /* === ADVANCED SCROLL STACK (Adapted) === */
+            .scroll-stack-scroller {
+                position: relative;
+                width: 100%;
+                overflow-x: visible;
+                /* On mobile, we'll use window scroll, so scroller itself is just a container */
             }
-            .insta-item:nth-child(n) { z-index: calc(10 + var(--i, 0)); } /* Stagger or just rely on DOM order */
+            .scroll-stack-inner {
+                padding: 50px 0 100px;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                gap: 0;
+            }
+            .scroll-stack-card {
+                transform-origin: top center;
+                will-change: transform, filter;
+                backface-visibility: hidden;
+                transform-style: preserve-3d;
+                width: 100%;
+                margin-bottom: 20px;
+                box-sizing: border-box;
+                position: relative;
+            }
+            .scroll-stack-end {
+                width: 100%;
+                height: 1px;
+            }
 
-            .pint-grid { display: flex; flex-direction: column; align-items: center; gap: 0; }
-            .pint-item { 
-                position: sticky; 
-                top: 120px; 
-                width: 100% !important;
-                max-width: none !important;
-                margin-bottom: 150px;
-                box-shadow: 0 -10px 30px rgba(0,0,0,0.15);
-                transition: transform 0.4s ease, opacity 0.4s ease, filter 0.4s ease;
+            .insta-grid, .pint-grid { 
+                display: block !important; /* Managed by ScrollStack JS */
+            }
+            
+            #insta-grid .insta-item, #pint-grid .pint-item {
+                /* Reset existing sticky from previous version to avoid conflict */
+                position: relative !important;
+                top: auto !important;
+                margin-bottom: 30px;
             }
             
 
@@ -1586,11 +1598,14 @@
                 </a>
             </div>
             
-            <div class="insta-grid" id="insta-grid">
-                <div style="grid-column: 1 / -1; text-align: center; color: var(--text-gray); padding: 50px;">
-                    <div class="loader"></div>
-                    <p>Fetching amazing moments...</p>
+            <div class="scroll-stack-scroller">
+                <div class="scroll-stack-inner insta-grid" id="insta-grid">
+                    <div style="text-align: center; color: var(--text-gray); padding: 50px;">
+                        <div class="loader"></div>
+                        <p>Fetching amazing moments...</p>
+                    </div>
                 </div>
+                <div class="scroll-stack-end"></div>
             </div>
         </section>
 
@@ -1603,11 +1618,14 @@
                 </a>
             </div>
             
-            <div class="pint-grid" id="pint-grid">
-                <div style="column-span: all; text-align: center; color: var(--text-gray); padding: 50px;">
-                    <div class="loader"></div>
-                    <p>Curating your visual inspiration...</p>
+            <div class="scroll-stack-scroller">
+                <div class="scroll-stack-inner pint-grid" id="pint-grid">
+                    <div style="text-align: center; color: var(--text-gray); padding: 50px;">
+                        <div class="loader"></div>
+                        <p>Curating your visual inspiration...</p>
+                    </div>
                 </div>
+                <div class="scroll-stack-end"></div>
             </div>
         </section>
 
@@ -1802,12 +1820,14 @@
                     data.data.forEach((item) => {
                         const imgUrl = item.media_type === 'VIDEO' ? item.thumbnail_url : item.media_url;
                         const html = `
-                            <a href="${item.permalink}" target="_blank" class="insta-item">
-                                <img src="${imgUrl}" alt="IG Post" loading="lazy">
-                                <div class="insta-overlay">
-                                    <i class="fab fa-instagram"></i>
-                                </div>
-                            </a>
+                            <div class="scroll-stack-card-wrapper">
+                                <a href="${item.permalink}" target="_blank" class="insta-item scroll-stack-card">
+                                    <img src="${imgUrl}" alt="IG Post" loading="lazy">
+                                    <div class="insta-overlay">
+                                        <i class="fab fa-instagram"></i>
+                                    </div>
+                                </a>
+                            </div>
                         `;
                         grid.innerHTML += html;
                     });
@@ -1852,10 +1872,9 @@
                         const imgSrc = imgMatch ? imgMatch[1].replace('236x', '564x') : '';
                         
                         if (imgSrc) {
-                            const pinElement = document.createElement('div');
-                            pinElement.className = 'pint-item';
+                            pinElement.className = 'scroll-stack-card-wrapper';
                             pinElement.innerHTML = `
-                                <a href="${item.link}" target="_blank">
+                                <a href="${item.link}" target="_blank" class="pint-item scroll-stack-card">
                                     <img src="${imgSrc}" alt="${item.title}" loading="lazy">
                                     <div class="pint-overlay">
                                         <i class="fab fa-pinterest-p"></i>
@@ -2095,44 +2114,130 @@
         if (textElement) {
             setTimeout(typeEffect, 1000);
         }
-        // 6. Mobile Scroll Stack (Layering Effect)
-        if (window.innerWidth <= 768) {
-            const stackObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    const item = entry.target;
-                    // When the item reaches the sticky top position, we can start scaling it if needed
-                    // But usually, we want to scale OLDER cards.
-                    // A better way: track the scroll position and apply scale to all items in view
-                });
-            }, { threshold: [0, 1] });
+        // --- Advanced Scroll Stack (Adapted from React Logic) ---
+        let lenis;
+        const lastTransforms = new Map();
 
-            // Instead of just observer, let's use a simple scroll listener for the stacking scale effect
-            window.addEventListener('scroll', () => {
-                const items = document.querySelectorAll('.insta-item, .pint-item');
-                const stickyTop = 100; // Match CSS top
+        function initScrollStack() {
+            if (window.innerWidth > 768) return;
 
-                items.forEach((item, index) => {
-                    const rect = item.getBoundingClientRect();
-                    const distanceFromTop = rect.top - stickyTop;
+            // Config
+            const config = {
+                itemDistance: 50,
+                itemScale: 0.03,
+                itemStackDistance: 25,
+                stackPosition: '15%',
+                scaleEndPosition: '5%',
+                baseScale: 0.9,
+                blurAmount: 2
+            };
+
+            // Initialize Lenis for smooth scroll
+            lenis = new Lenis({
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                smoothWheel: true
+            });
+
+            function raf(time) {
+                lenis.raf(time);
+                requestAnimationFrame(raf);
+            }
+            requestAnimationFrame(raf);
+
+            const calculateProgress = (scrollTop, start, end) => {
+                if (scrollTop < start) return 0;
+                if (scrollTop > end) return 1;
+                return (scrollTop - start) / (end - start);
+            };
+
+            const parsePercentage = (value, containerHeight) => {
+                if (typeof value === 'string' && value.includes('%')) {
+                    return (parseFloat(value) / 100) * containerHeight;
+                }
+                return parseFloat(value);
+            };
+
+            const getElementOffset = (element) => {
+                const rect = element.getBoundingClientRect();
+                return rect.top + window.scrollY;
+            };
+
+            const updateCardTransforms = () => {
+                const cards = document.querySelectorAll('.scroll-stack-card');
+                if (!cards.length) return;
+
+                const scrollTop = window.scrollY;
+                const containerHeight = window.innerHeight;
+                const stackPositionPx = parsePercentage(config.stackPosition, containerHeight);
+                const scaleEndPositionPx = parsePercentage(config.scaleEndPosition, containerHeight);
+
+                // For simplicity in vanilla, we use the bottom of the last container as the end point
+                const lastGrid = document.querySelector('#pint-grid');
+                const endPos = lastGrid ? getElementOffset(lastGrid) + lastGrid.offsetHeight : 5000;
+
+                cards.forEach((card, i) => {
+                    const cardTop = getElementOffset(card);
+                    const triggerStart = cardTop - stackPositionPx - config.itemStackDistance * i;
+                    const triggerEnd = cardTop - scaleEndPositionPx;
                     
-                    if (distanceFromTop <= 0) {
-                        // Card is sticky, start scaling it down as the NEXT card approaches
-                        // Or just scale based on how far it is "pushed" into the stack
-                        const progress = Math.min(Math.abs(distanceFromTop) / 500, 1);
-                        const scale = 1 - (progress * 0.1); // Scale down to 0.9
-                        const opacity = 1 - (progress * 0.4); // Fade slightly
-                        
-                        item.style.transform = `scale(${scale})`;
-                        item.style.opacity = opacity;
-                        item.style.filter = `blur(${progress * 2}px)`;
-                    } else {
-                        item.style.transform = `scale(1)`;
-                        item.style.opacity = 1;
-                        item.style.filter = `none`;
+                    const pinStart = triggerStart;
+                    const pinEnd = endPos - (containerHeight / 2);
+
+                    const scaleProgress = calculateProgress(scrollTop, triggerStart, triggerEnd);
+                    const targetScale = config.baseScale + i * config.itemScale;
+                    const scale = 1 - scaleProgress * (1 - targetScale);
+
+                    // Blur logic
+                    let blur = 0;
+                    if (config.blurAmount) {
+                        let topCardIndex = 0;
+                        for (let j = 0; j < cards.length; j++) {
+                            const jCardTop = getElementOffset(cards[j]);
+                            const jTriggerStart = jCardTop - stackPositionPx - config.itemStackDistance * j;
+                            if (scrollTop >= jTriggerStart) {
+                                topCardIndex = j;
+                            }
+                        }
+                        if (i < topCardIndex) {
+                            blur = (topCardIndex - i) * config.blurAmount;
+                        }
+                    }
+
+                    // Pinning / Translation logic
+                    let translateY = 0;
+                    const isPinned = scrollTop >= pinStart && scrollTop <= pinEnd;
+
+                    if (isPinned) {
+                        translateY = scrollTop - cardTop + stackPositionPx + config.itemStackDistance * i;
+                    } else if (scrollTop > pinEnd) {
+                        translateY = pinEnd - cardTop + stackPositionPx + config.itemStackDistance * i;
+                    }
+
+                    // Apply if changed
+                    const transform = `translate3d(0, ${translateY}px, 0) scale(${scale})`;
+                    const filter = blur > 0 ? `blur(${blur}px)` : 'none';
+                    
+                    const last = lastTransforms.get(i) || {};
+                    if (last.transform !== transform || last.filter !== filter) {
+                        card.style.transform = transform;
+                        card.style.filter = filter;
+                        lastTransforms.set(i, { transform, filter });
                     }
                 });
-            });
+            };
+
+            lenis.on('scroll', updateCardTransforms);
+            
+            // Initial call
+            updateCardTransforms();
         }
+
+        // Trigger initialization after content is likely loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Give extra time for IG/Pinterest to load
+            setTimeout(initScrollStack, 2000);
+        });
     </script>
 </body>
 </html>
