@@ -2032,40 +2032,44 @@
                     card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
                 });
             });
-            // 5. Typing Animation (Identity Cycle)
-            const textElement = document.getElementById('typing-text');
-            const phrases = ["Muhammad Azzam", "Al-Fauzie", "Zerneva", "Photographer", "Videographer", "Editor", "Graphic Designer"];
-            let phraseIndex = 0;
-            let characterIndex = 0;
-            let isDeleting = false;
-            let typeSpeed = 150;
+        }
 
-            function typeEffect() {
-                const currentPhrase = phrases[phraseIndex];
-                
-                if (isDeleting) {
-                    textElement.textContent = currentPhrase.substring(0, characterIndex - 1);
-                    characterIndex--;
-                    typeSpeed = 100;
-                } else {
-                    textElement.textContent = currentPhrase.substring(0, characterIndex + 1);
-                    characterIndex++;
-                    typeSpeed = 200;
-                }
+        // 5. Typing Animation (Identity Cycle) - Moved outside pointer:fine to support mobile
+        const textElement = document.getElementById('typing-text');
+        const phrases = ["Muhammad Azzam", "Al-Fauzie", "Zerneva", "Photographer", "Videographer", "Editor", "Graphic Designer"];
+        let phraseIndex = 0;
+        let characterIndex = 0;
+        let isDeleting = false;
+        let typeSpeed = 150;
 
-                if (!isDeleting && characterIndex === currentPhrase.length) {
-                    isDeleting = true;
-                    typeSpeed = 2000; // Pause at end
-                } else if (isDeleting && characterIndex === 0) {
-                    isDeleting = false;
-                    phraseIndex = (phraseIndex + 1) % phrases.length;
-                    typeSpeed = 500;
-                }
-
-                setTimeout(typeEffect, typeSpeed);
+        function typeEffect() {
+            if (!textElement) return;
+            const currentPhrase = phrases[phraseIndex];
+            
+            if (isDeleting) {
+                textElement.textContent = currentPhrase.substring(0, characterIndex - 1);
+                characterIndex--;
+                typeSpeed = 100;
+            } else {
+                textElement.textContent = currentPhrase.substring(0, characterIndex + 1);
+                characterIndex++;
+                typeSpeed = 200;
             }
 
-            // Start the typing effect
+            if (!isDeleting && characterIndex === currentPhrase.length) {
+                isDeleting = true;
+                typeSpeed = 2000; // Pause at end
+            } else if (isDeleting && characterIndex === 0) {
+                isDeleting = false;
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+                typeSpeed = 500;
+            }
+
+            setTimeout(typeEffect, typeSpeed);
+        }
+
+        // Start the typing effect
+        if (textElement) {
             setTimeout(typeEffect, 1000);
         }
     </script>
