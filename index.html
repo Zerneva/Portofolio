@@ -1139,7 +1139,7 @@
 
             /* === HERO VISUAL === */
             .hero-visual { 
-                padding: 20px 0 30px; 
+                padding: 20px 0 20px; 
                 width: 100%; 
                 margin-top: 20px; 
                 position: relative; 
@@ -1147,74 +1147,34 @@
             }
             .hero-bg-text { display: none; } /* Huge text causes overflow on mobile */
             
-            .me-photo-wrapper { max-width: 280px; margin: 0 auto; position: relative; overflow: hidden; }
+            .me-photo-wrapper { max-width: 280px; margin: 0 auto; position: relative; overflow: visible; }
             
-            /* Floating cards - small, clamped to safe bounds */
-            .hero-floating-card { 
-                display: flex; 
-                padding: 8px 10px;
-                gap: 6px;
-                border-radius: 12px;
-                width: max-content;
+            /* Clean up redundant mobile specific overrides - use desktop positions but scale overall container */
+            .hero-floating-card, .profile-card-integrated, .expertise-pill { 
+                transform: scale(0.65) !important; /* Scale elements down uniformly */
             }
-            .hero-floating-card .card-icon { width: 26px; height: 26px; font-size: 0.8rem; border-radius: 8px; }
-            .hero-floating-card .card-label { font-size: 0.5rem; }
-            .hero-floating-card .card-value { font-size: 0.7rem; }
- 
-            .card-location { top: 4%; right: -40px; left: auto !important; bottom: auto; animation: none; transform: scale(0.65); z-index: 5; }
-            .card-stats { top: 50%; left: 5%; right: auto; bottom: auto; animation: none; }
- 
-            /* Profile card - clean, CENTERED BELOW photo */
-            .profile-card-integrated { 
-                position: relative !important;
-                top: auto !important; right: auto !important; bottom: auto !important; left: auto !important;
-                margin: 20px auto 0 !important;
-                transform: none !important;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-                width: 85%;
-                max-width: 300px;
-                padding: 15px 20px 16px;
-                border-radius: 25px;
-                gap: 10px;
-                z-index: 20;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-                border: 1px solid var(--border-color);
-                animation: none !important;
-                background: var(--card-white);
-            }
-            .profile-card-integrated:hover { transform: none !important; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
-            .profile-card-integrated img { display: none; } /* Hide icon on mobile */
-            .profile-info { text-align: center; }
-            .profile-info h3 { font-size: 1.1rem; }
-            .profile-info h4 { font-size: 0.9rem; margin-bottom: 3px; }
-            .profile-info p { font-size: 0.8rem; margin-bottom: 8px; }
-            .profile-info .badge { padding: 5px 12px; font-size: 0.65rem; }
-            
-            .floating-social-integrated { right: 12px; top: -14px; width: 34px; height: 34px; font-size: 1rem; border-radius: 10px; }
-            
-            /* Enhanced Overlay Pills for Mobile */
-            .expertise-pill { 
-                display: flex !important; 
-                position: absolute;
-                width: max-content !important;
-                white-space: nowrap;
-                transform: scale(0.7); 
-                padding: 6px 16px; 
-                font-size: 0.75rem; 
-                background: rgba(255,255,255,0.8);
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(255,255,255,0.5);
-                z-index: 25;
-                animation: none !important;
-            }
-            [data-theme="dark"] .expertise-pill { background: rgba(30,35,45,0.8); border-color: rgba(255,255,255,0.1); }
 
-            .pill-1 { top: 25%; left: -15px !important; right: auto !important; transform: rotate(-8deg) scale(0.7) !important; }
-            .pill-2 { top: 65%; right: -25px !important; left: auto !important; transform: rotate(5deg) scale(0.7) !important; }
-            .pill-3 { bottom: 8%; left: -5px !important; right: auto !important; transform: rotate(-3deg) scale(0.7) !important; }
+            .card-location { top: 0%; right: -25px; left: auto; bottom: auto; padding: 12px 18px !important; }
+            .card-stats { bottom: 5%; left: -25px; right: auto; top: auto; padding: 12px 18px !important; }
+
+            .profile-card-integrated { 
+                position: absolute !important;
+                bottom: -55px !important;
+                right: 0px !important;
+                transform: scale(0.65) !important;
+                transform-origin: bottom right;
+                width: auto !important;
+                padding: 18px 22px !important;
+                display: flex !important;
+                flex-direction: row !important;
+            }
+            .profile-card-integrated img { display: block !important; width: 60px !important; height: 60px !important; }
+            .profile-info { text-align: left !important; }
+
+            .expertise-pill { transform: scale(0.6) !important; }
+            .pill-1 { top: 35%; left: -40px !important; right: auto !important; }
+            .pill-2 { top: 60%; right: -50px !important; left: auto !important; }
+            .pill-3 { bottom: 15%; right: 10% !important; left: auto !important; }
             
             /* Restored & Visible Tech Icons */
             .tech-icon-bg { display: block; font-size: 2rem; opacity: 0.15; z-index: 1; }
@@ -1417,7 +1377,6 @@
         <a href="https://facebook.com/Muhammad_Azzam" target="_blank" class="social-link-vert" title="Facebook"><i class="fab fa-facebook-f"></i></a>
         <a href="https://x.com/azzzzza_m" target="_blank" class="social-link-vert" title="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
         <a href="https://id.pinterest.com/Zernevaa/" target="_blank" class="social-link-vert" title="Pinterest"><i class="fab fa-pinterest-p"></i></a>
-        <a href="https://wa.me/6282183214881" target="_blank" class="social-link-vert" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
         <a href="mailto:azzamliwa25@gmail.com" target="_blank" class="social-link-vert" title="Email"><i class="fas fa-envelope"></i></a>
     </aside>
 
