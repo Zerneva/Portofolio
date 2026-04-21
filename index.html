@@ -179,13 +179,24 @@
                 radial-gradient(circle at 100% 100%, rgba(13,138,188,0.12) 0%, transparent 50%);
         }
 
-        /* --- Cinematic Film Grain --- */
-        .film-grain {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-            opacity: 0.04; mix-blend-mode: overlay;
+        /* --- Theme Transition Animation --- */
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation: none;
+            mix-blend-mode: normal;
         }
-        [data-theme="dark"] .film-grain { opacity: 0.06; mix-blend-mode: screen; }
+
+        ::view-transition-old(root) {
+            z-index: 1;
+        }
+
+        ::view-transition-new(root) {
+            z-index: 9999;
+        }
+
+        .theme-transitioning {
+            pointer-events: none !important;
+        }
 
         /* --- Scroll Reveal Class --- */
         .reveal {
@@ -336,12 +347,25 @@
             z-index: 10;
         }
         .hero-title h1 {
-            font-size: clamp(4rem, 8vw, 7.5rem);
+            font-size: clamp(3rem, 8vw, 5.5rem);
             font-weight: 900;
-            line-height: 0.95;
-            letter-spacing: -3px;
+            line-height: 1.1;
             margin-bottom: 25px;
-            color: var(--text-dark);
+            letter-spacing: -3px;
+            min-height: 2.2em; /* Ensure stable height during typing */
+        }
+        .typing-cursor {
+            display: inline-block;
+            width: 3px;
+            height: 0.8em;
+            background-color: var(--accent-yellow);
+            margin-left: 8px;
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+        }
+        @keyframes blink {
+            from, to { opacity: 1; }
+            50% { opacity: 0; }
         }
         .hero-title p {
             font-size: 1.25rem;
@@ -459,7 +483,7 @@
         .hero-floating-card .card-value { font-size: 1rem; font-weight: 800; margin: 0; }
         
         .card-location .card-icon { background: var(--accent-yellow); color: #1a1a1a; }
-        .card-stats .card-icon { background: var(--text-dark); color: #fff; }
+        .card-stats .card-icon { background: var(--text-dark); color: var(--bg-body); }
 
         [data-theme="dark"] .hero-floating-card {
             background: rgba(22, 25, 30, 0.6);
@@ -478,82 +502,10 @@
         }
         .card-location {
             top: 15%;
-            right: 0;
+            right: -80px;
             animation-delay: 2s;
         }
 
-        .profile-card-integrated {
-            position: absolute;
-            bottom: -40px;
-            right: 0%;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 35px;
-            padding: 22px 28px;
-            display: flex;
-            align-items: center;
-            gap: 22px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-            animation: fadeUp 1s ease 0.4s both;
-            border: 1px solid rgba(255,255,255,0.5);
-            z-index: 20;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        [data-theme="dark"] .profile-card-integrated {
-            background: rgba(22, 25, 30, 0.8);
-            border-color: rgba(255,255,255,0.1);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-        .profile-card-integrated:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.12);
-            border-color: var(--accent-yellow);
-        }
-        .profile-card-integrated img {
-            width: 85px;
-            height: 85px;
-            border-radius: 22px;
-            object-fit: cover;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        .profile-info h3 {
-            font-size: 1.4rem;
-            font-weight: 800;
-            margin: 0;
-            color: var(--text-dark);
-            line-height: 1.1;
-        }
-        .profile-info h4 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin: 2px 0 6px;
-            color: var(--text-dark);
-            opacity: 0.8;
-        }
-        .profile-info p {
-            font-size: 0.95rem;
-            color: var(--text-gray);
-            margin-bottom: 12px;
-            font-weight: 500;
-        }
-        .profile-info .badge {
-            background: rgba(0,0,0,0.04);
-            padding: 6px 14px;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--text-dark);
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-        [data-theme="dark"] .profile-info .badge {
-            background: rgba(255,255,255,0.04);
-            border-color: rgba(255,255,255,0.1);
-        }
-        .profile-info .badge i { color: #22c55e; font-size: 0.8rem; }
 
         /* Expertise Pills Styling */
         .expertise-pill {
@@ -578,7 +530,8 @@
         }
         .pill-1 { top: 40%; right: -15%; animation-delay: 0.5s; }
         .pill-2 { top: 65%; right: -5%; animation-delay: 1.5s; }
-        .pill-3 { bottom: 15%; right: 15%; animation-delay: 2.5s; background: var(--accent-yellow); color: #1a1a1a; border: none; }
+        .pill-3 { bottom: 15%; right: 15%; animation-delay: 2.5s; background: var(--accent-yellow); color: var(--bg-body); border: none; }
+        [data-theme="dark"] .pill-3 { background: rgba(255, 208, 40, 0.1); color: var(--accent-yellow); border: 1px solid var(--accent-yellow); backdrop-filter: blur(10px); }
 
         /* Floating Tech Icons */
         .tech-icon-bg {
@@ -655,67 +608,9 @@
         }
         @keyframes scrollLine { 0% { top: -20px; } 100% { top: 50px; } }
 
-        .floating-social-integrated {
-            position: absolute;
-            top: -15px;
-            right: -15px;
-            width: 48px;
-            height: 48px;
-            background: var(--text-dark);
-            color: var(--bg-body);
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            font-size: 1.4rem;
-            transition: 0.3s;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-        .floating-social-integrated:hover {
-            transform: scale(1.1) rotate(10deg);
-            background: var(--accent-yellow);
-            color: #1a1a1a;
-        }
 
 
-        /* --- Infinite Marquee --- */
-        .marquee-wrapper {
-            width: 100%;
-            background: var(--text-dark);
-            padding: 25px 0;
-            border-radius: 30px;
-            overflow: hidden;
-            margin-bottom: 80px;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            box-shadow: var(--shadow-light);
-        }
-        .marquee-content {
-            display: inline-flex;
-            align-items: center;
-            animation: scroller 25s linear infinite;
-        }
-        .marquee-text {
-            color: var(--bg-body);
-            font-size: 2.5rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 0 40px;
-            display: flex;
-            align-items: center;
-            gap: 40px;
-        }
-        .marquee-text i {
-            color: var(--accent-yellow);
-            font-size: 1.5rem;
-        }
-        @keyframes scroller {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
+
 
         /* --- Bento Grid System --- */
         .bento-grid {
@@ -1091,6 +986,44 @@
             .custom-cursor.hovering { width: 60px; height: 60px; background-color: #FFF; }
         }
 
+        /* --- Dark Mode Text Contrast Fixes --- */
+        [data-theme="dark"] .box-skills {
+            color: var(--text-dark);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        [data-theme="dark"] .box-skills h2 {
+            color: var(--text-dark);
+        }
+        [data-theme="dark"] .skill-icon i,
+        [data-theme="dark"] .skill-icon span {
+            color: var(--text-dark);
+        }
+        [data-theme="dark"] .skill-icon:hover i,
+        [data-theme="dark"] .skill-icon:hover span {
+            color: #1A1A1A;
+        }
+        [data-theme="dark"] .box-contact {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-dark);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        [data-theme="dark"] .expertise-item:hover {
+            color: var(--text-dark);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        [data-theme="dark"] .filter-btn.active, 
+        [data-theme="dark"] .filter-btn:hover { 
+            background: var(--accent-yellow); 
+            color: #1a1a1a; 
+        }
+        /* Specific overrides to prevent icons inheriting black from bg-body */
+        [data-theme="dark"] .skill-icon i, 
+        [data-theme="dark"] .cert-item i, 
+        [data-theme="dark"] .exp-item i {
+            color: var(--accent-yellow);
+        }
+
         /* --- Responsive Design --- */
         @media (max-width: 1200px) {
             .bento-grid { grid-template-columns: repeat(2, 1fr); }
@@ -1150,26 +1083,14 @@
             .me-photo-wrapper { max-width: 280px; margin: 0 auto; position: relative; overflow: visible; }
             
             /* Clean up redundant mobile specific overrides - use desktop positions but scale overall container */
-            .hero-floating-card, .profile-card-integrated, .expertise-pill { 
+            .hero-floating-card, .expertise-pill { 
                 transform: scale(0.65) !important; /* Scale elements down uniformly */
             }
 
-            .card-location { top: 0%; right: -25px; left: auto; bottom: auto; padding: 12px 18px !important; }
+            .card-location { top: 0%; right: -60px; left: auto; bottom: auto; padding: 12px 18px !important; }
             .card-stats { bottom: 5%; left: -25px; right: auto; top: auto; padding: 12px 18px !important; }
 
-            .profile-card-integrated { 
-                position: absolute !important;
-                bottom: -55px !important;
-                right: 0px !important;
-                transform: scale(0.65) !important;
-                transform-origin: bottom right;
-                width: auto !important;
-                padding: 18px 22px !important;
-                display: flex !important;
-                flex-direction: row !important;
-            }
-            .profile-card-integrated img { display: block !important; width: 60px !important; height: 60px !important; }
-            .profile-info { text-align: left !important; }
+
 
             .expertise-pill { transform: scale(0.6) !important; }
             .pill-1 { top: 35%; left: -40px !important; right: auto !important; }
@@ -1219,10 +1140,7 @@
             .insta-header h2, .pint-header h2 { font-size: 1.8rem; }
             .insta-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
             
-            /* === MARQUEE === */
-            .marquee-wrapper { border-radius: 15px; padding: 15px 0; margin-bottom: 50px; }
-            .marquee-text { font-size: 1.2rem; gap: 20px; }
-            .marquee-text i { font-size: 1rem; }
+
             
             /* === FOOTER === */
             .footer-section { padding: 40px 5% 35px; border-radius: 25px; }
@@ -1305,7 +1223,7 @@
             .main-content { padding: 90px 4% 30px; }
             .hero-title h1 { font-size: 2rem; }
             .btn { padding: 11px 20px; font-size: 0.85rem; }
-            .profile-card-integrated { width: 95%; padding: 10px 14px; }
+
             .bento-box { padding: 20px; border-radius: 20px; }
             .bento-box h2 { font-size: 1.4rem; }
             .expertise-item { padding: 20px; }
@@ -1345,7 +1263,7 @@
         </div>
     </div>
 
-    <div class="film-grain"></div>
+
     <div class="bg-mesh"></div>
 
     <!-- Sidebar Navigation -->
@@ -1384,7 +1302,7 @@
         <!-- Hero Section -->
         <section class="hero-top" id="hero">
             <div class="hero-title" data-speed="0.2">
-                <h1>Hello, I'm <br> Muhammad Azzam.</h1>
+                <h1>Hello, I'm <br> <span id="typing-text"></span><span class="typing-cursor"></span></h1>
                 <p>An Informatics Graduate & Digital Specialist. Blending the logic of software engineering with the creativity of digital marketing to build impactful modern solutions.</p>
                 <div class="hero-actions">
                     <a href="#projects" class="btn btn-primary magnetic">See My Work</a>
@@ -1403,7 +1321,7 @@
                 <i class="fas fa-database tech-icon-bg tech-4" data-speed="0.3"></i>
 
                 <div class="me-photo-wrapper" data-speed="0.1">
-                    <img src="image/me.png" alt="Muhammad Azzam" class="me-photo">
+                    <img src="image/me1.png" alt="Muhammad Azzam" class="me-photo">
                     
                     <!-- Floating Components -->
                     <div class="hero-floating-card card-location">
@@ -1431,32 +1349,8 @@
                 <div class="expertise-pill pill-1">Mobile Development</div>
                 <div class="expertise-pill pill-2">UI/UX Design</div>
                 <div class="expertise-pill pill-3">Backend Engineer</div>
-
-                <div class="profile-card-integrated">
-                    <img src="image/icon.png" alt="Muhammad Azzam">
-                    <div class="profile-info">
-                        <h3>Muhammad Azzam</h3>
-                        <h4>Al-Fauzie</h4>
-                        <p>Digital Specialist</p>
-                        <span class="badge"><i class="fas fa-check-circle"></i> Available for work</span>
-                    </div>
-                    <a href="https://instagram.com/azzzzza_m" target="_blank" class="floating-social-integrated">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                </div>
             </div>
         </section>
-
-
-        <!-- Infinite Marquee -->
-        <div class="marquee-wrapper reveal">
-            <div class="marquee-content">
-                <div class="marquee-text">
-                    SOFTWARE ENGINEERING <i class="fas fa-starOfLife"></i> DIGITAL MARKETING <i class="fas fa-starOfLife"></i> DATA ANALYTICS <i class="fas fa-starOfLife"></i> CREATIVE CONTENT <i class="fas fa-starOfLife"></i>
-                    SOFTWARE ENGINEERING <i class="fas fa-starOfLife"></i> DIGITAL MARKETING <i class="fas fa-starOfLife"></i> DATA ANALYTICS <i class="fas fa-starOfLife"></i> CREATIVE CONTENT <i class="fas fa-starOfLife"></i>
-                </div>
-            </div>
-        </div>
 
         <!-- Bento Grid System -->
         <section id="about" class="bento-grid">
@@ -1804,6 +1698,44 @@
         }
 
         themeToggleBtn.addEventListener('click', () => {
+            const rect = themeToggleBtn.getBoundingClientRect();
+            const x = rect.left + rect.width / 2;
+            const y = rect.top + rect.height / 2;
+            
+            const endRadius = Math.hypot(
+                Math.max(x, innerWidth - x),
+                Math.max(y, innerHeight - y)
+            );
+
+            if (!document.startViewTransition) {
+                toggleTheme();
+                return;
+            }
+
+            const transition = document.startViewTransition(() => {
+                toggleTheme();
+            });
+
+            transition.ready.then(() => {
+                const clipPath = [
+                    `circle(0px at ${x}px ${y}px)`,
+                    `circle(${endRadius}px at ${x}px ${y}px)`
+                ];
+                
+                document.documentElement.animate(
+                    {
+                        clipPath: clipPath,
+                    },
+                    {
+                        duration: 800,
+                        easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                        pseudoElement: '::view-transition-new(root)',
+                    }
+                );
+            });
+        });
+
+        function toggleTheme() {
             const currentTheme = document.documentElement.getAttribute('data-theme');
             if (currentTheme === 'dark') {
                 document.documentElement.removeAttribute('data-theme');
@@ -1814,7 +1746,7 @@
                 localStorage.setItem('portoTheme', 'dark');
                 themeIcon.classList.replace('fa-moon', 'fa-sun');
             }
-        });
+        }
 
         // --- Scroll Reveal Animation ---
         function reveal() {
@@ -2100,6 +2032,41 @@
                     card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
                 });
             });
+            // 5. Typing Animation (Identity Cycle)
+            const textElement = document.getElementById('typing-text');
+            const phrases = ["Muhammad Azzam", "Al-Fauzie", "Zerneva", "Photographer", "Videographer", "Editor", "Graphic Designer"];
+            let phraseIndex = 0;
+            let characterIndex = 0;
+            let isDeleting = false;
+            let typeSpeed = 150;
+
+            function typeEffect() {
+                const currentPhrase = phrases[phraseIndex];
+                
+                if (isDeleting) {
+                    textElement.textContent = currentPhrase.substring(0, characterIndex - 1);
+                    characterIndex--;
+                    typeSpeed = 100;
+                } else {
+                    textElement.textContent = currentPhrase.substring(0, characterIndex + 1);
+                    characterIndex++;
+                    typeSpeed = 200;
+                }
+
+                if (!isDeleting && characterIndex === currentPhrase.length) {
+                    isDeleting = true;
+                    typeSpeed = 2000; // Pause at end
+                } else if (isDeleting && characterIndex === 0) {
+                    isDeleting = false;
+                    phraseIndex = (phraseIndex + 1) % phrases.length;
+                    typeSpeed = 500;
+                }
+
+                setTimeout(typeEffect, typeSpeed);
+            }
+
+            // Start the typing effect
+            setTimeout(typeEffect, 1000);
         }
     </script>
 </body>
