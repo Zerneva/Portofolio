@@ -1135,10 +1135,33 @@
             .exp-icon { display: none; }
             
             /* === INSTAGRAM & PINTEREST === */
-            .insta-container, .pinterest-container { padding: 25px; border-radius: 25px; margin-bottom: 50px; }
+            .insta-container, .pinterest-container { padding: 20px; border-radius: 25px; margin-bottom: 50px; }
+            .insta-container.active, .pinterest-container.active { transform: none !important; } /* Fix sticky */
+            
             .insta-header, .pint-header { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: 25px; }
             .insta-header h2, .pint-header h2 { font-size: 1.8rem; }
-            .insta-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            
+            .insta-grid { grid-template-columns: 1fr; gap: 0; } /* Remove gap for cleaner stacking */
+            .insta-item { 
+                position: sticky; 
+                top: 100px; 
+                margin-bottom: 100px; /* Space to see the next card approach */
+                box-shadow: 0 -10px 30px rgba(0,0,0,0.15);
+                transition: transform 0.4s ease, opacity 0.4s ease, filter 0.4s ease;
+                z-index: 1;
+            }
+            .insta-item:nth-child(n) { z-index: calc(10 + var(--i, 0)); } /* Stagger or just rely on DOM order */
+
+            .pint-grid { display: flex; flex-direction: column; align-items: center; gap: 0; }
+            .pint-item { 
+                position: sticky; 
+                top: 120px; 
+                width: 100% !important;
+                max-width: none !important;
+                margin-bottom: 150px;
+                box-shadow: 0 -10px 30px rgba(0,0,0,0.15);
+                transition: transform 0.4s ease, opacity 0.4s ease, filter 0.4s ease;
+            }
             
 
             
@@ -2071,6 +2094,44 @@
         // Start the typing effect
         if (textElement) {
             setTimeout(typeEffect, 1000);
+        }
+        // 6. Mobile Scroll Stack (Layering Effect)
+        if (window.innerWidth <= 768) {
+            const stackObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const item = entry.target;
+                    // When the item reaches the sticky top position, we can start scaling it if needed
+                    // But usually, we want to scale OLDER cards.
+                    // A better way: track the scroll position and apply scale to all items in view
+                });
+            }, { threshold: [0, 1] });
+
+            // Instead of just observer, let's use a simple scroll listener for the stacking scale effect
+            window.addEventListener('scroll', () => {
+                const items = document.querySelectorAll('.insta-item, .pint-item');
+                const stickyTop = 100; // Match CSS top
+
+                items.forEach((item, index) => {
+                    const rect = item.getBoundingClientRect();
+                    const distanceFromTop = rect.top - stickyTop;
+                    
+                    if (distanceFromTop <= 0) {
+                        // Card is sticky, start scaling it down as the NEXT card approaches
+                        // Or just scale based on how far it is "pushed" into the stack
+                        const progress = Math.min(Math.abs(distanceFromTop) / 500, 1);
+                        const scale = 1 - (progress * 0.1); // Scale down to 0.9
+                        const opacity = 1 - (progress * 0.4); // Fade slightly
+                        
+                        item.style.transform = `scale(${scale})`;
+                        item.style.opacity = opacity;
+                        item.style.filter = `blur(${progress * 2}px)`;
+                    } else {
+                        item.style.transform = `scale(1)`;
+                        item.style.opacity = 1;
+                        item.style.filter = `none`;
+                    }
+                });
+            });
         }
     </script>
 </body>
