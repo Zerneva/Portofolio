@@ -1845,11 +1845,19 @@
                 `;
             }
         }
-        
+
         document.addEventListener('DOMContentLoaded', () => {
-            fetchInstagram();
-            fetchPinterest();
-            setupProjectFiltering();
+            Promise.all([fetchInstagram(), fetchPinterest()])
+                .then(() => {
+                    console.log("Feeds loaded, initializing ScrollStack...");
+                    initScrollStack();
+                    setupProjectFiltering();
+                })
+                .catch(err => {
+                    console.error("Feed error, initializing ScrollStack anyway...", err);
+                    initScrollStack();
+                    setupProjectFiltering();
+                });
         });
 
         async function fetchPinterest() {
@@ -1872,6 +1880,7 @@
                         const imgSrc = imgMatch ? imgMatch[1].replace('236x', '564x') : '';
                         
                         if (imgSrc) {
+                            const pinElement = document.createElement('div');
                             pinElement.className = 'scroll-stack-card-wrapper';
                             pinElement.innerHTML = `
                                 <a href="${item.link}" target="_blank" class="pint-item scroll-stack-card">
@@ -2121,6 +2130,9 @@
         function initScrollStack() {
             if (window.innerWidth > 768) return;
 
+            const cards = document.querySelectorAll('.scroll-stack-card');
+            if (!cards.length) return;
+
             // Config
             const config = {
                 itemDistance: 50,
@@ -2132,6 +2144,27 @@
                 blurAmount: 2
             };
 
+            // Cache offsets to prevent reflows during scroll
+            let cardOffsets = [];
+            let containerHeight = window.innerHeight;
+            let stackPositionPx = 0;
+            let scaleEndPositionPx = 0;
+            let endPos = 0;
+
+            function updateCache() {
+                containerHeight = window.innerHeight;
+                stackPositionPx = parsePercentage(config.stackPosition, containerHeight);
+                scaleEndPositionPx = parsePercentage(config.scaleEndPosition, containerHeight);
+                
+                cardOffsets = Array.from(cards).map(card => {
+                    const rect = card.getBoundingClientRect();
+                    return rect.top + window.scrollY;
+                });
+
+                const lastGrid = document.querySelector('#pint-grid');
+                endPos = lastGrid ? (lastGrid.getBoundingClientRect().top + window.scrollY + lastGrid.offsetHeight) : 5000;
+            }
+
             // Initialize Lenis for smooth scroll
             lenis = new Lenis({
                 duration: 1.2,
@@ -2140,8 +2173,10 @@
             });
 
             function raf(time) {
-                lenis.raf(time);
-                requestAnimationFrame(raf);
+                if (lenis) {
+                    lenis.raf(time);
+                    requestAnimationFrame(raf);
+                }
             }
             requestAnimationFrame(raf);
 
@@ -2151,33 +2186,29 @@
                 return (scrollTop - start) / (end - start);
             };
 
-            const parsePercentage = (value, containerHeight) => {
+            function parsePercentage(value, height) {
                 if (typeof value === 'string' && value.includes('%')) {
-                    return (parseFloat(value) / 100) * containerHeight;
+                    return (parseFloat(value) / 100) * height;
                 }
                 return parseFloat(value);
-            };
-
-            const getElementOffset = (element) => {
-                const rect = element.getBoundingClientRect();
-                return rect.top + window.scrollY;
-            };
+            }
 
             const updateCardTransforms = () => {
-                const cards = document.querySelectorAll('.scroll-stack-card');
-                if (!cards.length) return;
-
                 const scrollTop = window.scrollY;
-                const containerHeight = window.innerHeight;
-                const stackPositionPx = parsePercentage(config.stackPosition, containerHeight);
-                const scaleEndPositionPx = parsePercentage(config.scaleEndPosition, containerHeight);
-
-                // For simplicity in vanilla, we use the bottom of the last container as the end point
-                const lastGrid = document.querySelector('#pint-grid');
-                const endPos = lastGrid ? getElementOffset(lastGrid) + lastGrid.offsetHeight : 5000;
+                
+                // O(N) optimization: find the "topmost" active card once per frame
+                let topCardIndex = 0;
+                for (let j = 0; j < cards.length; j++) {
+                    const jTriggerStart = cardOffsets[j] - stackPositionPx - config.itemStackDistance * j;
+                    if (scrollTop >= jTriggerStart) {
+                        topCardIndex = j;
+                    } else {
+                        break; // Stop early since cards are ordered
+                    }
+                }
 
                 cards.forEach((card, i) => {
-                    const cardTop = getElementOffset(card);
+                    const cardTop = cardOffsets[i];
                     const triggerStart = cardTop - stackPositionPx - config.itemStackDistance * i;
                     const triggerEnd = cardTop - scaleEndPositionPx;
                     
@@ -2188,23 +2219,12 @@
                     const targetScale = config.baseScale + i * config.itemScale;
                     const scale = 1 - scaleProgress * (1 - targetScale);
 
-                    // Blur logic
+                    // Blur logic (Optimized)
                     let blur = 0;
-                    if (config.blurAmount) {
-                        let topCardIndex = 0;
-                        for (let j = 0; j < cards.length; j++) {
-                            const jCardTop = getElementOffset(cards[j]);
-                            const jTriggerStart = jCardTop - stackPositionPx - config.itemStackDistance * j;
-                            if (scrollTop >= jTriggerStart) {
-                                topCardIndex = j;
-                            }
-                        }
-                        if (i < topCardIndex) {
-                            blur = (topCardIndex - i) * config.blurAmount;
-                        }
+                    if (config.blurAmount && i < topCardIndex) {
+                        blur = (topCardIndex - i) * config.blurAmount;
                     }
 
-                    // Pinning / Translation logic
                     let translateY = 0;
                     const isPinned = scrollTop >= pinStart && scrollTop <= pinEnd;
 
@@ -2214,9 +2234,8 @@
                         translateY = pinEnd - cardTop + stackPositionPx + config.itemStackDistance * i;
                     }
 
-                    // Apply if changed
-                    const transform = `translate3d(0, ${translateY}px, 0) scale(${scale})`;
-                    const filter = blur > 0 ? `blur(${blur}px)` : 'none';
+                    const transform = `translate3d(0, ${Math.round(translateY)}px, 0) scale(${Math.round(scale * 1000) / 1000})`;
+                    const filter = blur > 0 ? `blur(${Math.round(blur * 10) / 10}px)` : 'none';
                     
                     const last = lastTransforms.get(i) || {};
                     if (last.transform !== transform || last.filter !== filter) {
@@ -2227,17 +2246,18 @@
                 });
             };
 
+            // Setup cache and listeners
+            updateCache();
+            window.addEventListener('resize', () => { updateCache(); updateCardTransforms(); });
             lenis.on('scroll', updateCardTransforms);
+            window.addEventListener('load', () => { updateCache(); updateCardTransforms(); });
             
-            // Initial call
+            console.log("ScrollStack Active:", cards.length, "cards detected.");
             updateCardTransforms();
         }
 
-        // Trigger initialization after content is likely loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            // Give extra time for IG/Pinterest to load
-            setTimeout(initScrollStack, 2000);
-        });
+        // Removed redundant old initialization triggers
+    </script>
     </script>
 </body>
 </html>
