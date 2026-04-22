@@ -2164,185 +2164,194 @@
         if (textElement) {
             setTimeout(typeEffect, 1000);
         }
-        // --- Advanced Scroll Stack (Adapted from React Logic) ---
-        let lenis;
-        const lastTransforms = new Map();
-
+        // --- Scroll Stack (Per-Section + Lerp Smoothing) ---
         function initScrollStack() {
             if (window.innerWidth > 768) return;
 
-            const cards = document.querySelectorAll('.scroll-stack-card');
-            if (!cards.length) return;
-
-            // Config
             const config = {
-                itemDistance: 50,
                 itemScale: 0.03,
                 itemStackDistance: 25,
-                stackPosition: '15%',
-                scaleEndPosition: '5%',
+                stackPosition: 0.15,   // 15% of viewport
+                scaleEndPosition: 0.05, // 5% of viewport
                 baseScale: 0.9,
-                blurAmount: 2
+                blurAmount: 2,
+                lerpSpeed: 0.18        // Smoothing factor (0 = frozen, 1 = instant)
             };
 
-            // Cache offsets to prevent reflows during scroll
-            let cardOffsets = [];
-            let containerHeight = window.innerHeight;
-            let stackPositionPx = 0;
-            let scaleEndPositionPx = 0;
-            let endPos = 0;
+            // --- Build per-section data ---
+            const sectionConfigs = [];
+            ['insta-grid', 'pint-grid'].forEach(gridId => {
+                const grid = document.getElementById(gridId);
+                if (!grid) return;
+                const cards = grid.querySelectorAll('.scroll-stack-card');
+                if (!cards.length) return;
 
+                const cardData = Array.from(cards).map(() => ({
+                    // Current lerped values (what's actually rendered)
+                    currentY: 0,
+                    currentScale: 1,
+                    currentBlur: 0,
+                    // Target values (what we're lerping towards)
+                    targetY: 0,
+                    targetScale: 1,
+                    targetBlur: 0,
+                    // Cached original offset
+                    originalTop: 0
+                }));
+
+                sectionConfigs.push({ grid, cards, cardData, endPos: 0 });
+            });
+
+            if (!sectionConfigs.length) return;
+
+            let containerHeight = window.innerHeight;
+            let stackPositionPx = config.stackPosition * containerHeight;
+            let scaleEndPositionPx = config.scaleEndPosition * containerHeight;
+
+            // --- Measure original positions (strips transforms first) ---
             function updateCache() {
                 containerHeight = window.innerHeight;
-                stackPositionPx = parsePercentage(config.stackPosition, containerHeight);
-                scaleEndPositionPx = parsePercentage(config.scaleEndPosition, containerHeight);
-                
-                // Strip transforms before measuring to prevent feedback loop
-                // (transformed positions ≠ original positions → causes jitter)
-                const savedTransforms = [];
-                cards.forEach((card, i) => {
-                    savedTransforms.push({
-                        transform: card.style.transform,
-                        filter: card.style.filter
+                stackPositionPx = config.stackPosition * containerHeight;
+                scaleEndPositionPx = config.scaleEndPosition * containerHeight;
+
+                sectionConfigs.forEach(section => {
+                    // Strip transforms before measuring
+                    section.cards.forEach(card => {
+                        card.style.transform = 'none';
+                        card.style.filter = 'none';
                     });
-                    card.style.transform = 'none';
-                    card.style.filter = 'none';
                 });
-                
-                // Force layout recalc with clean positions
+
+                // Force single layout recalc
                 void document.body.offsetHeight;
-                
-                cardOffsets = Array.from(cards).map(card => {
-                    const rect = card.getBoundingClientRect();
-                    return rect.top + window.scrollY;
+
+                sectionConfigs.forEach(section => {
+                    // Measure clean positions
+                    section.cards.forEach((card, i) => {
+                        const rect = card.getBoundingClientRect();
+                        section.cardData[i].originalTop = rect.top + window.scrollY;
+                    });
+
+                    // Each section has its own endPos
+                    const gridRect = section.grid.getBoundingClientRect();
+                    section.endPos = gridRect.top + window.scrollY + gridRect.height;
                 });
 
-                const lastGrid = document.querySelector('#pint-grid');
-                endPos = lastGrid ? (lastGrid.getBoundingClientRect().top + window.scrollY + lastGrid.offsetHeight) : 5000;
-                
-                // Restore transforms immediately
-                cards.forEach((card, i) => {
-                    card.style.transform = savedTransforms[i].transform;
-                    card.style.filter = savedTransforms[i].filter;
+                // Immediately re-apply current lerped values (no visual flash)
+                sectionConfigs.forEach(section => {
+                    section.cards.forEach((card, i) => {
+                        const d = section.cardData[i];
+                        card.style.transform = `translate3d(0,${d.currentY}px,0) scale(${d.currentScale})`;
+                        card.style.filter = d.currentBlur > 0.5 ? `blur(${d.currentBlur}px)` : 'none';
+                    });
                 });
-                
-                // Clear transform cache so next frame recalculates
-                lastTransforms.clear();
             }
 
-            // Initialize Lenis for smooth scroll
-            lenis = new Lenis({
-                duration: 1.2,
-                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-                smoothWheel: true,
-                smoothTouch: false,      // Don't fight native touch scroll
-                touchMultiplier: 1       // Keep native touch speed
-            });
+            // --- Calculate targets for one section ---
+            function calcTargets(section, scrollTop) {
+                const { cards, cardData, endPos } = section;
+                const pinEnd = endPos - (containerHeight * 0.5);
 
-            function raf(time) {
-                if (lenis) {
-                    lenis.raf(time);
-                    requestAnimationFrame(raf);
-                }
-            }
-            requestAnimationFrame(raf);
-
-            const calculateProgress = (scrollTop, start, end) => {
-                if (scrollTop < start) return 0;
-                if (scrollTop > end) return 1;
-                return (scrollTop - start) / (end - start);
-            };
-
-            function parsePercentage(value, height) {
-                if (typeof value === 'string' && value.includes('%')) {
-                    return (parseFloat(value) / 100) * height;
-                }
-                return parseFloat(value);
-            }
-
-            const updateCardTransforms = (customScroll = null) => {
-                const scrollTop = customScroll !== null ? customScroll : window.scrollY;
-                
-                // O(N) optimization: find the "topmost" active card once per frame
+                // Find topmost active card
                 let topCardIndex = 0;
                 for (let j = 0; j < cards.length; j++) {
-                    const jTriggerStart = cardOffsets[j] - stackPositionPx - config.itemStackDistance * j;
-                    if (scrollTop >= jTriggerStart) {
+                    const triggerStart = cardData[j].originalTop - stackPositionPx - config.itemStackDistance * j;
+                    if (scrollTop >= triggerStart) {
                         topCardIndex = j;
                     } else {
-                        break; // Stop early since cards are ordered
+                        break;
                     }
                 }
 
-                cards.forEach((card, i) => {
-                    const cardTop = cardOffsets[i];
+                cardData.forEach((d, i) => {
+                    const cardTop = d.originalTop;
                     const triggerStart = cardTop - stackPositionPx - config.itemStackDistance * i;
                     const triggerEnd = cardTop - scaleEndPositionPx;
-                    
-                    const pinStart = triggerStart;
-                    const pinEnd = endPos - (containerHeight / 2);
 
-                    const scaleProgress = calculateProgress(scrollTop, triggerStart, triggerEnd);
+                    // Scale
+                    let scaleProgress = 0;
+                    if (scrollTop >= triggerEnd) scaleProgress = 1;
+                    else if (scrollTop > triggerStart) scaleProgress = (scrollTop - triggerStart) / (triggerEnd - triggerStart);
+
                     const targetScale = config.baseScale + i * config.itemScale;
-                    const scale = 1 - scaleProgress * (1 - targetScale);
+                    d.targetScale = 1 - scaleProgress * (1 - targetScale);
 
-                    // Blur logic (Optimized)
-                    let blur = 0;
-                    if (config.blurAmount && i < topCardIndex) {
-                        blur = (topCardIndex - i) * config.blurAmount;
-                    }
+                    // Blur
+                    d.targetBlur = (config.blurAmount && i < topCardIndex) 
+                        ? (topCardIndex - i) * config.blurAmount 
+                        : 0;
 
-                    let translateY = 0;
-                    const isPinned = scrollTop >= pinStart && scrollTop <= pinEnd;
-
-                    if (isPinned) {
-                        translateY = scrollTop - cardTop + stackPositionPx + config.itemStackDistance * i;
+                    // TranslateY
+                    const pinStart = triggerStart;
+                    if (scrollTop >= pinStart && scrollTop <= pinEnd) {
+                        d.targetY = scrollTop - cardTop + stackPositionPx + config.itemStackDistance * i;
                     } else if (scrollTop > pinEnd) {
-                        translateY = pinEnd - cardTop + stackPositionPx + config.itemStackDistance * i;
-                    }
-
-                    // Sub-pixel precision for smooth movement (no Math.round on translateY)
-                    const transform = `translate3d(0, ${translateY.toFixed(1)}px, 0) scale(${(Math.round(scale * 1000) / 1000)})`;
-                    const filter = blur > 0 ? `blur(${(blur).toFixed(1)}px)` : 'none';
-                    
-                    const last = lastTransforms.get(i) || {};
-                    if (last.transform !== transform || last.filter !== filter) {
-                        card.style.transform = transform;
-                        card.style.filter = filter;
-                        lastTransforms.set(i, { transform, filter });
+                        d.targetY = pinEnd - cardTop + stackPositionPx + config.itemStackDistance * i;
+                    } else {
+                        d.targetY = 0;
                     }
                 });
-            };
+            }
 
-            // Setup cache and listeners
-            const runUpdate = () => {
+            // --- Lerp helper ---
+            function lerp(current, target, speed) {
+                const diff = target - current;
+                // Snap if very close (prevents infinite micro-updates)
+                if (Math.abs(diff) < 0.1) return target;
+                return current + diff * speed;
+            }
+
+            // --- Animation loop (runs every frame) ---
+            let running = true;
+
+            function animate() {
+                if (!running) return;
+
+                const scrollTop = window.scrollY;
+
+                sectionConfigs.forEach(section => {
+                    calcTargets(section, scrollTop);
+
+                    section.cardData.forEach((d, i) => {
+                        // Lerp towards targets
+                        d.currentY = lerp(d.currentY, d.targetY, config.lerpSpeed);
+                        d.currentScale = lerp(d.currentScale, d.targetScale, config.lerpSpeed);
+                        d.currentBlur = lerp(d.currentBlur, d.targetBlur, config.lerpSpeed);
+
+                        // Apply to DOM
+                        const card = section.cards[i];
+                        card.style.transform = `translate3d(0,${d.currentY.toFixed(1)}px,0) scale(${d.currentScale.toFixed(3)})`;
+                        card.style.filter = d.currentBlur > 0.3 ? `blur(${d.currentBlur.toFixed(1)}px)` : 'none';
+                    });
+                });
+
+                requestAnimationFrame(animate);
+            }
+
+            // --- Init ---
+            // Wait for images, then cache + start
+            setTimeout(() => {
                 updateCache();
-                updateCardTransforms();
-            };
+                requestAnimationFrame(animate);
+            }, 2000);
 
-            window.addEventListener('resize', runUpdate);
-            
-            // Sync with Lenis
-            lenis.on('scroll', (e) => {
-                updateCardTransforms(e.scroll);
+            // Re-cache on resize
+            window.addEventListener('resize', () => {
+                updateCache();
             });
 
-            // Initial trigger after a delay to ensure images/layout are ready
-            setTimeout(runUpdate, 2000);
-            
-            // Listen for lazy-loaded images instead of polling interval
-            // (setInterval corrupts offsets when cards are transformed)
-            cards.forEach(card => {
-                const img = card.querySelector('img');
-                if (img) {
-                    if (img.complete) return; // Already loaded
-                    img.addEventListener('load', () => {
-                        setTimeout(updateCache, 100);
-                    }, { once: true });
-                }
+            // Re-cache when lazy images finish loading
+            sectionConfigs.forEach(section => {
+                section.cards.forEach(card => {
+                    const img = card.querySelector('img');
+                    if (img && !img.complete) {
+                        img.addEventListener('load', () => setTimeout(updateCache, 100), { once: true });
+                    }
+                });
             });
-            
-            console.log("ScrollStack Active:", cards.length, "cards detected.");
+
+            const totalCards = sectionConfigs.reduce((sum, s) => sum + s.cards.length, 0);
+            console.log('ScrollStack Active:', totalCards, 'cards across', sectionConfigs.length, 'sections');
         }
     </script>
 </body>
