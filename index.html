@@ -1141,37 +1141,42 @@
             .expertise-item:hover { transform: translateY(-3px); }
             .exp-icon { display: none; }
             
-            /* === MOBILE SCROLL STACK === */
+            /* === MOBILE SCROLL STACK (Sticky-based) === */
             .scroll-stack-scroller {
                 position: relative;
                 width: 100%;
             }
-            .scroll-stack-end {
-                width: 100%;
-                height: 1px;
-            }
 
-            /* --- Instagram & Pinterest: single-column on mobile --- */
+            /* --- Instagram & Pinterest: single-column stack on mobile --- */
             .insta-grid, .pint-grid { 
                 display: flex !important; 
                 flex-direction: column !important;
-                gap: 20px !important;
+                gap: 0 !important;
             }
+
             .scroll-stack-card-wrapper {
+                position: sticky;
+                top: 90px; /* just below mobile nav */
                 width: 100%;
+                margin-bottom: 15px;
+                transition: none;
             }
+
+            .scroll-stack-card {
+                transform-origin: top center;
+                will-change: transform;
+                width: 100%;
+                box-sizing: border-box;
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0 4px 25px rgba(0,0,0,0.12);
+            }
+
             .insta-item, .pint-item {
                 aspect-ratio: 3 / 4;
                 width: 100% !important;
                 max-width: 100% !important;
                 border-radius: 20px;
-            }
-            .scroll-stack-card {
-                transform-origin: top center;
-                will-change: transform, filter;
-                backface-visibility: hidden;
-                width: 100%;
-                box-sizing: border-box;
             }
 
             /* Always show overlay badges on mobile (no hover on touch) */
@@ -1182,14 +1187,17 @@
             }
             .insta-overlay i, .pint-overlay i { font-size: 1rem; }
 
-            /* Container padding adjustments */
+            /* Container adjustments for mobile */
             .insta-container, .pinterest-container {
                 padding: 25px;
                 border-radius: 25px;
                 margin-bottom: 40px;
+                overflow: visible; /* Allow sticky to work within */
             }
             .insta-header, .pint-header {
                 margin-bottom: 25px;
+                position: relative;
+                z-index: 50; /* Keep header above sticky cards */
             }
             .insta-header h2, .pint-header h2 {
                 font-size: 1.6rem;
@@ -2164,153 +2172,97 @@
         if (textElement) {
             setTimeout(typeEffect, 1000);
         }
-        // --- Advanced Scroll Stack (Adapted from React Logic) ---
-        let lenis;
-        const lastTransforms = new Map();
-
+        // --- Scroll Stack (Sticky-based, Mobile Only) ---
         function initScrollStack() {
             if (window.innerWidth > 768) return;
 
-            const cards = document.querySelectorAll('.scroll-stack-card');
-            if (!cards.length) return;
+            const STACK_TOP = 90;    // px below mobile nav
+            const STACK_OFFSET = 8;  // px stagger between stacked cards
 
-            // Config
-            const config = {
-                itemDistance: 50,
-                itemScale: 0.03,
-                itemStackDistance: 25,
-                stackPosition: '15%',
-                scaleEndPosition: '5%',
-                baseScale: 0.9,
-                blurAmount: 2
-            };
+            const sections = [
+                document.getElementById('insta-grid'),
+                document.getElementById('pint-grid')
+            ].filter(Boolean);
 
-            // Cache offsets to prevent reflows during scroll
-            let cardOffsets = [];
-            let containerHeight = window.innerHeight;
-            let stackPositionPx = 0;
-            let scaleEndPositionPx = 0;
-            let endPos = 0;
+            let totalCards = 0;
 
-            function updateCache() {
-                containerHeight = window.innerHeight;
-                stackPositionPx = parsePercentage(config.stackPosition, containerHeight);
-                scaleEndPositionPx = parsePercentage(config.scaleEndPosition, containerHeight);
-                
-                cardOffsets = Array.from(cards).map(card => {
-                    const rect = card.getBoundingClientRect();
-                    return rect.top + window.scrollY;
-                });
+            // --- Setup: assign sticky top + z-index per card ---
+            sections.forEach(grid => {
+                const wrappers = grid.querySelectorAll('.scroll-stack-card-wrapper');
+                if (!wrappers.length) return;
 
-                const lastGrid = document.querySelector('#pint-grid');
-                endPos = lastGrid ? (lastGrid.getBoundingClientRect().top + window.scrollY + lastGrid.offsetHeight) : 5000;
-            }
+                wrappers.forEach((wrapper, i) => {
+                    wrapper.style.position = 'sticky';
+                    wrapper.style.top = (STACK_TOP + i * STACK_OFFSET) + 'px';
+                    wrapper.style.zIndex = i + 1;
+                    wrapper.style.marginBottom = '15px';
 
-            // Initialize Lenis for smooth scroll
-            lenis = new Lenis({
-                duration: 1.2,
-                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-                smoothWheel: true
-            });
-
-            function raf(time) {
-                if (lenis) {
-                    lenis.raf(time);
-                    requestAnimationFrame(raf);
-                }
-            }
-            requestAnimationFrame(raf);
-
-            const calculateProgress = (scrollTop, start, end) => {
-                if (scrollTop < start) return 0;
-                if (scrollTop > end) return 1;
-                return (scrollTop - start) / (end - start);
-            };
-
-            function parsePercentage(value, height) {
-                if (typeof value === 'string' && value.includes('%')) {
-                    return (parseFloat(value) / 100) * height;
-                }
-                return parseFloat(value);
-            }
-
-            const updateCardTransforms = (customScroll = null) => {
-                const scrollTop = customScroll !== null ? customScroll : window.scrollY;
-                
-                // O(N) optimization: find the "topmost" active card once per frame
-                let topCardIndex = 0;
-                for (let j = 0; j < cards.length; j++) {
-                    const jTriggerStart = cardOffsets[j] - stackPositionPx - config.itemStackDistance * j;
-                    if (scrollTop >= jTriggerStart) {
-                        topCardIndex = j;
-                    } else {
-                        break; // Stop early since cards are ordered
-                    }
-                }
-
-                cards.forEach((card, i) => {
-                    const cardTop = cardOffsets[i];
-                    const triggerStart = cardTop - stackPositionPx - config.itemStackDistance * i;
-                    const triggerEnd = cardTop - scaleEndPositionPx;
-                    
-                    const pinStart = triggerStart;
-                    const pinEnd = endPos - (containerHeight / 2);
-
-                    const scaleProgress = calculateProgress(scrollTop, triggerStart, triggerEnd);
-                    const targetScale = config.baseScale + i * config.itemScale;
-                    const scale = 1 - scaleProgress * (1 - targetScale);
-
-                    // Blur logic (Optimized)
-                    let blur = 0;
-                    if (config.blurAmount && i < topCardIndex) {
-                        blur = (topCardIndex - i) * config.blurAmount;
-                    }
-
-                    let translateY = 0;
-                    const isPinned = scrollTop >= pinStart && scrollTop <= pinEnd;
-
-                    if (isPinned) {
-                        translateY = scrollTop - cardTop + stackPositionPx + config.itemStackDistance * i;
-                    } else if (scrollTop > pinEnd) {
-                        translateY = pinEnd - cardTop + stackPositionPx + config.itemStackDistance * i;
-                    }
-
-                    const transform = `translate3d(0, ${Math.round(translateY)}px, 0) scale(${Math.round(scale * 1000) / 1000})`;
-                    const filter = blur > 0 ? `blur(${Math.round(blur * 10) / 10}px)` : 'none';
-                    
-                    const last = lastTransforms.get(i) || {};
-                    if (last.transform !== transform || last.filter !== filter) {
-                        card.style.transform = transform;
-                        card.style.filter = filter;
-                        lastTransforms.set(i, { transform, filter });
+                    // Last card: make relative so it scrolls away naturally
+                    if (i === wrappers.length - 1) {
+                        wrapper.style.position = 'relative';
+                        wrapper.style.marginBottom = '0';
                     }
                 });
-            };
 
-            // Setup cache and listeners
-            const runUpdate = () => {
-                updateCache();
-                updateCardTransforms();
-            };
-
-            window.addEventListener('resize', runUpdate);
-            
-            // Sync with Lenis
-            lenis.on('scroll', (e) => {
-                // We use the scroll value from Lenis for better sync
-                updateCardTransforms(e.scroll);
+                totalCards += wrappers.length;
             });
 
-            // Initial trigger after a delay to ensure images/layout are ready
-            setTimeout(runUpdate, 2000);
-            
-            // Background interval to catch late-loading images
-            setInterval(updateCache, 3000);
-            
-            console.log("ScrollStack Active:", cards.length, "cards detected.");
+            if (!totalCards) return;
+
+            // --- Scroll Effect: scale + dim cards that are behind ---
+            let ticking = false;
+
+            function updateEffects() {
+                sections.forEach(grid => {
+                    const wrappers = grid.querySelectorAll('.scroll-stack-card-wrapper');
+                    const cards = grid.querySelectorAll('.scroll-stack-card');
+                    if (!wrappers.length || !cards.length) return;
+
+                    // Find which card is "on top" (last one whose wrapper is stuck)
+                    let topCardIndex = -1;
+                    wrappers.forEach((wrapper, i) => {
+                        if (wrapper.style.position !== 'sticky') return;
+                        const rect = wrapper.getBoundingClientRect();
+                        const stickyTop = STACK_TOP + i * STACK_OFFSET;
+                        // Card is "stuck" if its top is at or near its sticky position
+                        if (rect.top <= stickyTop + 3) {
+                            topCardIndex = i;
+                        }
+                    });
+
+                    cards.forEach((card, i) => {
+                        if (topCardIndex >= 0 && i < topCardIndex) {
+                            // Card is behind: scale down + dim
+                            const depth = topCardIndex - i;
+                            const scale = Math.max(0.90, 1 - depth * 0.03);
+                            const brightness = Math.max(0.55, 1 - depth * 0.15);
+                            card.style.transform = 'scale(' + scale + ')';
+                            card.style.filter = 'brightness(' + brightness + ')';
+                        } else {
+                            // Active or below: reset
+                            card.style.transform = 'scale(1)';
+                            card.style.filter = 'none';
+                        }
+                    });
+                });
+
+                ticking = false;
+            }
+
+            function onScroll() {
+                if (!ticking) {
+                    requestAnimationFrame(updateEffects);
+                    ticking = true;
+                }
+            }
+
+            window.addEventListener('scroll', onScroll, { passive: true });
+
+            // Initial run
+            updateEffects();
+
+            console.log('ScrollStack Active (sticky):', totalCards, 'cards across', sections.length, 'sections');
         }
-
-        // Removed redundant old initialization triggers
     </script>
 </body>
 </html>
