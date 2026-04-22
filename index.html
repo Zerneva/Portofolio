@@ -1924,7 +1924,7 @@
                 
                 if (data.status === 'ok') {
                     grid.innerHTML = '';
-                    data.items.slice(0, 24).forEach(item => {
+                    data.items.slice(0, 8).forEach(item => {
                         const content = item.content || item.description || '';
                         const imgMatch = content.match(/src=["']([^"']+)["']/);
                         const imgSrc = imgMatch ? imgMatch[1].replace('236x', '564x') : '';
