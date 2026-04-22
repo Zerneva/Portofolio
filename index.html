@@ -2231,10 +2231,6 @@
                         const rect = card.getBoundingClientRect();
                         section.cardData[i].originalTop = rect.top + window.scrollY;
                     });
-
-                    // Each section has its own endPos
-                    const gridRect = section.grid.getBoundingClientRect();
-                    section.endPos = gridRect.top + window.scrollY + gridRect.height;
                 });
 
                 // Immediately re-apply current lerped values (no visual flash)
@@ -2249,46 +2245,42 @@
 
             // --- Calculate targets for one section ---
             function calcTargets(section, scrollTop) {
-                const { cards, cardData, endPos } = section;
-                const pinEnd = endPos - (containerHeight * 0.5);
+                const { cards, cardData } = section;
+                if (!cards.length) return;
 
-                // Find topmost active card
-                let topCardIndex = 0;
-                for (let j = 0; j < cards.length; j++) {
-                    const triggerStart = cardData[j].originalTop - stackPositionPx - config.itemStackDistance * j;
-                    if (scrollTop >= triggerStart) {
-                        topCardIndex = j;
-                    } else {
-                        break;
-                    }
-                }
+                // The scroll position where the LAST card reaches stackPositionPx
+                const lastCardTop = cardData[cards.length - 1].originalTop;
+                const pinEnd = lastCardTop - stackPositionPx;
+
+                // Cap the scroll to pinEnd so the stack scrolls away naturally afterwards
+                // (This pulls the container's white background up with the cards!)
+                const effectiveScroll = Math.min(scrollTop, pinEnd);
 
                 cardData.forEach((d, i) => {
                     const cardTop = d.originalTop;
-                    const triggerStart = cardTop - stackPositionPx - config.itemStackDistance * i;
-                    const triggerEnd = cardTop - scaleEndPositionPx;
+                    const triggerStart = cardTop - stackPositionPx;
 
-                    // Scale
-                    let scaleProgress = 0;
-                    if (scrollTop >= triggerEnd) scaleProgress = 1;
-                    else if (scrollTop > triggerStart) scaleProgress = (scrollTop - triggerStart) / (triggerEnd - triggerStart);
-
-                    const targetScale = config.baseScale + i * config.itemScale;
-                    d.targetScale = 1 - scaleProgress * (1 - targetScale);
-
-                    // Blur
-                    d.targetBlur = (config.blurAmount && i < topCardIndex) 
-                        ? (topCardIndex - i) * config.blurAmount 
-                        : 0;
-
-                    // TranslateY
-                    const pinStart = triggerStart;
-                    if (scrollTop >= pinStart && scrollTop <= pinEnd) {
-                        d.targetY = scrollTop - cardTop + stackPositionPx + config.itemStackDistance * i;
-                    } else if (scrollTop > pinEnd) {
-                        d.targetY = pinEnd - cardTop + stackPositionPx + config.itemStackDistance * i;
-                    } else {
+                    if (effectiveScroll < triggerStart) {
+                        // Card hasn't reached the stack yet
                         d.targetY = 0;
+                        d.targetScale = 1;
+                        d.targetBlur = 0;
+                    } else {
+                        // Card is pinned (or was pinned and is now scrolling away)
+                        const p = effectiveScroll - triggerStart; // How far we've scrolled past its pin point
+                        
+                        // Keep it pinned by pushing it down exactly 'p' pixels
+                        // Then subtract a small stagger to make older cards peek out at the top
+                        const stagger = (p / containerHeight) * 30;
+                        d.targetY = p - stagger;
+
+                        // Scale down smoothly as it gets buried
+                        const scaleDrop = (p / containerHeight) * 0.05;
+                        d.targetScale = Math.max(0.85, 1 - scaleDrop);
+
+                        // Blur smoothly as it gets buried
+                        const blurAmount = (p / containerHeight) * 5;
+                        d.targetBlur = Math.min(10, blurAmount);
                     }
                 });
             }
