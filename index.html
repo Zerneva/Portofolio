@@ -21,6 +21,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
     
     <style>
         /* --- CSS Variables & Theming --- */
@@ -180,6 +181,25 @@
                 radial-gradient(circle at 100% 100%, rgba(13,138,188,0.12) 0%, transparent 50%);
         }
 
+        /* --- Three.js Canvas Container --- */
+        #three-canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -5;
+            pointer-events: none;
+            opacity: 0.8;
+            transition: opacity 1s ease;
+        }
+        #three-canvas-container canvas {
+            display: block;
+        }
+        [data-theme="dark"] #three-canvas-container {
+            opacity: 0.6;
+        }
+
         /* --- Theme Transition Animation --- */
         ::view-transition-old(root),
         ::view-transition-new(root) {
@@ -199,16 +219,25 @@
             pointer-events: none !important;
         }
 
-        /* --- Scroll Reveal Class --- */
+        /* --- Scroll Reveal Class (Enhanced with stagger) --- */
         .reveal {
             opacity: 0;
-            transform: translateY(40px);
-            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform: translateY(50px) scale(0.97);
+            transition: all 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         .reveal.active {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
         }
+        /* Staggered children inside bento grid */
+        .bento-grid .reveal:nth-child(1) { transition-delay: 0.05s; }
+        .bento-grid .reveal:nth-child(2) { transition-delay: 0.12s; }
+        .bento-grid .reveal:nth-child(3) { transition-delay: 0.19s; }
+        .bento-grid .reveal:nth-child(4) { transition-delay: 0.26s; }
+        .bento-grid .reveal:nth-child(5) { transition-delay: 0.33s; }
+        .bento-grid .reveal:nth-child(6) { transition-delay: 0.40s; }
+        .bento-grid .reveal:nth-child(7) { transition-delay: 0.47s; }
+        .bento-grid .reveal:nth-child(8) { transition-delay: 0.54s; }
 
         /* --- Sidebar Navigation --- */
         .sidebar {
@@ -1297,6 +1326,160 @@
             .expertise-item { padding: 20px; }
             .exp-info h3 { font-size: 1.3rem; }
         }
+
+        /* === INTERACTIVE ENHANCEMENTS === */
+
+        /* --- Click Ripple Effect on Buttons --- */
+        .btn {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.4);
+            transform: scale(0);
+            animation: ripple-anim 0.6s ease-out;
+            pointer-events: none;
+        }
+        @keyframes ripple-anim {
+            to { transform: scale(4); opacity: 0; }
+        }
+
+        /* --- Skill Icon 3D Flip --- */
+        .skill-icon {
+            perspective: 600px;
+            cursor: pointer;
+            position: relative;
+        }
+        .skill-icon-inner {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            position: relative;
+        }
+        .skill-icon.flipped .skill-icon-inner {
+            transform: rotateY(180deg);
+        }
+
+        /* --- Expertise Accordion (Mobile Touch) --- */
+        .expertise-item .exp-desc-expand {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s;
+            padding: 0;
+        }
+        .expertise-item.expanded .exp-desc-expand {
+            max-height: 200px;
+            padding-top: 15px;
+        }
+
+        /* --- Counter Animation Number Glow --- */
+        .counter-value {
+            display: inline-block;
+            transition: color 0.3s;
+        }
+        .counter-value.counting {
+            color: var(--accent-yellow);
+            text-shadow: 0 0 20px rgba(255, 208, 40, 0.4);
+        }
+
+        /* --- Bento Box Hover Glow Border --- */
+        .bento-box {
+            transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+        .bento-box:hover {
+            border-color: var(--accent-yellow);
+            box-shadow: 0 20px 60px rgba(255, 208, 40, 0.08), var(--shadow-light);
+        }
+        [data-theme="dark"] .bento-box:hover {
+            box-shadow: 0 20px 60px rgba(255, 208, 40, 0.06);
+        }
+
+        /* --- Section Header Text Shimmer on Scroll --- */
+        .section-header {
+            background: linear-gradient(
+                90deg,
+                var(--text-dark) 0%,
+                var(--text-dark) 40%,
+                var(--accent-yellow) 50%,
+                var(--text-dark) 60%,
+                var(--text-dark) 100%
+            );
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: none;
+        }
+        .section-header.active {
+            animation: shimmer-text 3s ease-in-out 1;
+        }
+        @keyframes shimmer-text {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* --- Project Card "View" Prompt on Hover --- */
+        .project-card::after {
+            content: 'View Details →';
+            position: absolute;
+            bottom: 20px;
+            right: 25px;
+            background: var(--accent-yellow);
+            color: #1A1A1A;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 5;
+            pointer-events: none;
+        }
+        .project-card:hover::after {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Social Button Tooltip --- */
+        .social-btn {
+            position: relative;
+        }
+        .social-btn::before {
+            content: attr(title);
+            position: absolute;
+            bottom: calc(100% + 12px);
+            left: 50%;
+            transform: translateX(-50%) translateY(5px);
+            background: var(--text-dark);
+            color: var(--bg-body);
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10;
+        }
+        .social-btn:hover::before {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* --- Active Nav Indicator --- */
+        .nav-links a.active-nav {
+            background: var(--text-dark);
+            color: var(--bg-body);
+        }
+
+        /* --- Easter Egg: Konami Code Activated Glow --- */
+        body.easter-egg-active .bento-box {
+            border-color: var(--accent-yellow) !important;
+            box-shadow: 0 0 30px rgba(255, 208, 40, 0.15) !important;
+        }
     </style>
 </head>
 <body>
@@ -1333,6 +1516,7 @@
 
 
     <div class="bg-mesh"></div>
+    <div id="three-canvas-container"></div>
 
     <!-- Sidebar Navigation -->
     <aside class="sidebar">
@@ -1513,6 +1697,54 @@
                     <p>Junior High School</p>
                     <h4>MIN 3 Watas</h4>
                     <p>Elementary School</p>
+                </div>
+            </div>
+            
+            <!-- Box 7: Leadership DPM -->
+            <div class="bento-box box-organization reveal" style="grid-column: span 2;">
+                <h2><i class="fas fa-tower-broadcast" style="color: var(--accent-yellow);"></i> Leadership</h2>
+                <div class="exp-detail">
+                    <span class="date" style="background: rgba(128,128,128,0.1); padding: 5px 12px; border-radius: 15px; font-size: 0.85rem; font-weight: 700; display: inline-block; margin-bottom: 8px;">Jan 2022 - Dec 2022</span>
+                    <h4 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 5px;">DPM FRS UTS</h4>
+                    <p style="font-weight: 700; color: var(--accent-yellow); margin-bottom: 10px; font-size: 1.1rem;">Head of Media & Information Bureau</p>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 12px; display: flex; gap: 10px; align-items: flex-start;">
+                            <i class="fas fa-check-circle" style="color: var(--accent-yellow); margin-top: 5px; font-size: 0.9rem;"></i>
+                            <span style="font-size: 0.95rem; color: var(--text-gray);">Mengelola strategi komunikasi digital dan branding fakultas melalui berbagai platform media sosial dan web.</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; gap: 10px; align-items: flex-start;">
+                            <i class="fas fa-check-circle" style="color: var(--accent-yellow); margin-top: 5px; font-size: 0.9rem;"></i>
+                            <span style="font-size: 0.95rem; color: var(--text-gray);">Menyederhanakan alur informasi birokrasi menjadi konten kreatif yang mudah dipahami oleh mahasiswa.</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; gap: 10px; align-items: flex-start;">
+                            <i class="fas fa-check-circle" style="color: var(--accent-yellow); margin-top: 5px; font-size: 0.9rem;"></i>
+                            <span style="font-size: 0.95rem; color: var(--text-gray);">Bertanggung jawab atas publikasi informasi kritis dan darurat secara cepat dan akurat.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Box 8: Leadership Hokusei -->
+            <div class="bento-box box-organization reveal" style="grid-column: span 2;">
+                <h2><i class="fas fa-torii-gate" style="color: var(--accent-yellow);"></i> Organization</h2>
+                <div class="exp-detail">
+                    <span class="date" style="background: rgba(128,128,128,0.1); padding: 5px 12px; border-radius: 15px; font-size: 0.85rem; font-weight: 700; display: inline-block; margin-bottom: 8px;">Jan 2022 - Dec 2022</span>
+                    <h4 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 5px;">Hokusei UTS</h4>
+                    <p style="font-weight: 700; color: var(--accent-yellow); margin-bottom: 10px; font-size: 1.1rem;">Kaicho (President/Chairman)</p>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 12px; display: flex; gap: 10px; align-items: flex-start;">
+                            <i class="fas fa-check-circle" style="color: var(--accent-yellow); margin-top: 5px; font-size: 0.9rem;"></i>
+                            <span style="font-size: 0.95rem; color: var(--text-gray);">Memimpin organisasi dalam merancang dan mengeksekusi program kerja berskala universitas.</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; gap: 10px; align-items: flex-start;">
+                            <i class="fas fa-check-circle" style="color: var(--accent-yellow); margin-top: 5px; font-size: 0.9rem;"></i>
+                            <span style="font-size: 0.95rem; color: var(--text-gray);">Mengelola manajemen acara (Event Management) untuk festival budaya, seminar, dan kegiatan lingkungan.</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; gap: 10px; align-items: flex-start;">
+                            <i class="fas fa-check-circle" style="color: var(--accent-yellow); margin-top: 5px; font-size: 0.9rem;"></i>
+                            <span style="font-size: 0.95rem; color: var(--text-gray);">Membangun kemitraan internal dan eksternal untuk meningkatkan keterlibatan anggota dan jangkauan komunitas.</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </section>
@@ -1809,6 +2041,7 @@
 
         function toggleTheme() {
             const currentTheme = document.documentElement.getAttribute('data-theme');
+            const isDark = currentTheme !== 'dark';
             if (currentTheme === 'dark') {
                 document.documentElement.removeAttribute('data-theme');
                 localStorage.setItem('portoTheme', 'light');
@@ -1818,6 +2051,7 @@
                 localStorage.setItem('portoTheme', 'dark');
                 themeIcon.classList.replace('fa-moon', 'fa-sun');
             }
+            if (window.updateThreeTheme) window.updateThreeTheme(isDark);
         }
 
         // --- Scroll Reveal Animation ---
@@ -1889,6 +2123,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            initThreeJS();
             Promise.all([fetchInstagram(), fetchPinterest()])
                 .then(() => {
                     console.log("Feeds loaded, initializing ScrollStack...");
@@ -2354,6 +2589,338 @@
             const totalCards = sectionConfigs.reduce((sum, s) => sum + s.cards.length, 0);
             console.log('ScrollStack Active:', totalCards, 'cards across', sectionConfigs.length, 'sections');
         }
+
+        // --- Three.js 3D Background Logic ---
+        let threeScene, threeCamera, threeRenderer, threeNodes, threeLines;
+        
+        function initThreeJS() {
+            const container = document.getElementById('three-canvas-container');
+            if (!container) return;
+
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const accentColor = isDark ? 0xFFD028 : 0x333333;
+
+            threeScene = new THREE.Scene();
+            threeCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+            threeCamera.position.z = 40;
+
+            threeRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            threeRenderer.setSize(window.innerWidth, window.innerHeight);
+            threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(threeRenderer.domElement);
+
+            const nodeCount = 100;
+            const positions = new Float32Array(nodeCount * 3);
+            const velocities = new Float32Array(nodeCount * 3);
+            
+            for (let i = 0; i < nodeCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 100;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 100;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 50;
+
+                velocities[i * 3] = (Math.random() - 0.5) * 0.02;
+                velocities[i * 3 + 1] = (Math.random() - 0.5) * 0.02;
+                velocities[i * 3 + 2] = (Math.random() - 0.5) * 0.02;
+            }
+
+            const nodeGeometry = new THREE.BufferGeometry();
+            nodeGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+            const nodeMaterial = new THREE.PointsMaterial({
+                color: accentColor,
+                size: 1.5,
+                transparent: true,
+                opacity: 0.5,
+                sizeAttenuation: true
+            });
+
+            threeNodes = new THREE.Points(nodeGeometry, nodeMaterial);
+            threeScene.add(threeNodes);
+
+            // Line connections
+            const lineMaterial = new THREE.LineBasicMaterial({
+                color: accentColor,
+                transparent: true,
+                opacity: 0.1
+            });
+            const lineGeometry = new THREE.BufferGeometry();
+            threeLines = new THREE.LineSegments(lineGeometry, lineMaterial);
+            threeScene.add(threeLines);
+
+            let mouseX = 0, mouseY = 0;
+            let targetX = 0, targetY = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                targetX = (e.clientX - window.innerWidth / 2) * 0.01;
+                targetY = (e.clientY - window.innerHeight / 2) * 0.01;
+            });
+
+            function animateThree() {
+                requestAnimationFrame(animateThree);
+
+                const pos = threeNodes.geometry.attributes.position.array;
+                const linePositions = [];
+
+                for (let i = 0; i < nodeCount; i++) {
+                    pos[i * 3] += velocities[i * 3];
+                    pos[i * 3 + 1] += velocities[i * 3 + 1];
+                    pos[i * 3 + 2] += velocities[i * 3 + 2];
+
+                    if (Math.abs(pos[i * 3]) > 60) velocities[i * 3] *= -1;
+                    if (Math.abs(pos[i * 3 + 1]) > 60) velocities[i * 3 + 1] *= -1;
+                    if (Math.abs(pos[i * 3 + 2]) > 60) velocities[i * 3 + 2] *= -1;
+
+                    // Check neighbors for lines
+                    for (let j = i + 1; j < nodeCount; j++) {
+                        const dx = pos[i * 3] - pos[j * 3];
+                        const dy = pos[i * 3 + 1] - pos[j * 3 + 1];
+                        const dz = pos[i * 3 + 2] - pos[j * 3 + 2];
+                        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+                        if (dist < 15) {
+                            linePositions.push(pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]);
+                            linePositions.push(pos[j * 3], pos[j * 3 + 1], pos[j * 3 + 2]);
+                        }
+                    }
+                }
+
+                threeNodes.geometry.attributes.position.needsUpdate = true;
+                threeLines.geometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+
+                // Lerp mouse interaction
+                mouseX += (targetX - mouseX) * 0.05;
+                mouseY += (targetY - mouseY) * 0.05;
+                
+                threeScene.rotation.y = mouseX * 0.5;
+                threeScene.rotation.x = -mouseY * 0.5;
+
+                threeRenderer.render(threeScene, threeCamera);
+            }
+
+            animateThree();
+
+            window.addEventListener('resize', () => {
+                threeCamera.aspect = window.innerWidth / window.innerHeight;
+                threeCamera.updateProjectionMatrix();
+                threeRenderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        window.updateThreeTheme = function(isDark) {
+            const color = isDark ? 0xFFD028 : 0x333333;
+            if (threeNodes) threeNodes.material.color.setHex(color);
+            if (threeLines) threeLines.material.color.setHex(color);
+        };
+
+        // ========================================
+        // === INTERACTIVE ENHANCEMENTS ENGINE ===
+        // ========================================
+
+        // --- 1. Button Ripple Effect ---
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.btn');
+            if (!btn) return;
+            
+            const rect = btn.getBoundingClientRect();
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+            ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+            btn.appendChild(ripple);
+            ripple.addEventListener('animationend', () => ripple.remove());
+        });
+
+        // --- 2. Skill Icon Flip on Click/Tap ---
+        document.querySelectorAll('.skill-icon').forEach(icon => {
+            icon.addEventListener('click', () => {
+                icon.classList.toggle('flipped');
+                // Bounce animation
+                icon.style.transform = 'scale(0.85)';
+                setTimeout(() => { icon.style.transform = 'scale(1.1)'; }, 150);
+                setTimeout(() => { icon.style.transform = 'scale(1)'; }, 300);
+            });
+        });
+
+        // --- 3. Section Header Shimmer Observer ---
+        const shimmerObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Reset animation to replay
+                    entry.target.style.animation = 'none';
+                    entry.target.offsetHeight; // Force reflow
+                    entry.target.style.animation = null;
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.section-header').forEach(header => {
+            shimmerObserver.observe(header);
+        });
+
+        // --- 4. Active Navigation Tracking ---
+        const navSections = document.querySelectorAll('section[id], .hero-top');
+        const navLinksAll = document.querySelectorAll('.nav-links a[href^="#"]');
+
+        function updateActiveNav() {
+            let current = '';
+            navSections.forEach(section => {
+                const top = section.offsetTop - 200;
+                if (window.scrollY >= top) {
+                    current = section.getAttribute('id') || 'hero';
+                }
+            });
+            navLinksAll.forEach(link => {
+                link.classList.remove('active-nav');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active-nav');
+                }
+            });
+        }
+        window.addEventListener('scroll', updateActiveNav);
+        updateActiveNav();
+
+        // --- 5. Counter Animation (for stats in hero card) ---
+        function animateCounter(el, target, duration = 2000) {
+            let start = 0;
+            const startTime = performance.now();
+            el.classList.add('counting');
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                // Ease-out cubic
+                const ease = 1 - Math.pow(1 - progress, 3);
+                const current = Math.floor(ease * target);
+                el.textContent = current + '+';
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                } else {
+                    el.textContent = target + '+';
+                    el.classList.remove('counting');
+                }
+            }
+            requestAnimationFrame(update);
+        }
+
+        // Observe counter elements
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.dataset.counted) {
+                    entry.target.dataset.counted = 'true';
+                    const target = parseInt(entry.target.dataset.target || '0');
+                    animateCounter(entry.target, target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.counter-value').forEach(el => {
+            counterObserver.observe(el);
+        });
+
+        // --- 6. Gyroscope Parallax for Mobile ---
+        if (window.DeviceOrientationEvent && /Mobi|Android/i.test(navigator.userAgent)) {
+            let gyroX = 0, gyroY = 0;
+            
+            window.addEventListener('deviceorientation', (e) => {
+                gyroX = (e.gamma || 0) / 45; // Left-right tilt, normalized to ~[-1,1]
+                gyroY = (e.beta || 0) / 45;  // Front-back tilt
+            });
+            
+            // Apply subtle parallax to hero elements
+            function applyGyroParallax() {
+                const heroCards = document.querySelectorAll('.hero-floating-card, .expertise-pill');
+                heroCards.forEach((el, i) => {
+                    const intensity = 8 + (i * 3);
+                    const x = gyroX * intensity;
+                    const y = gyroY * intensity * 0.5;
+                    el.style.transform = `translate(${x}px, ${y}px) scale(0.65)`;
+                });
+                
+                // Also move Three.js scene
+                if (threeScene) {
+                    threeScene.rotation.y += (gyroX * 0.3 - threeScene.rotation.y) * 0.05;
+                    threeScene.rotation.x += (-gyroY * 0.3 - threeScene.rotation.x) * 0.05;
+                }
+                
+                requestAnimationFrame(applyGyroParallax);
+            }
+            applyGyroParallax();
+        }
+
+        // --- 7. Expertise Item Touch Expand (Mobile) ---
+        if (window.innerWidth <= 768) {
+            document.querySelectorAll('.expertise-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // Close others
+                    document.querySelectorAll('.expertise-item.expanded').forEach(other => {
+                        if (other !== this) other.classList.remove('expanded');
+                    });
+                    this.classList.toggle('expanded');
+                });
+            });
+        }
+
+        // --- 8. Konami Code Easter Egg ---
+        const konamiCode = [38,38,40,40,37,39,37,39,66,65]; // ↑↑↓↓←→←→BA
+        let konamiIndex = 0;
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.keyCode === konamiCode[konamiIndex]) {
+                konamiIndex++;
+                if (konamiIndex === konamiCode.length) {
+                    document.body.classList.add('easter-egg-active');
+                    
+                    // Show a fun toast notification
+                    const toast = document.createElement('div');
+                    toast.innerHTML = '🎮 Konami Code Activated! You found the secret!';
+                    toast.style.cssText = `
+                        position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+                        background: var(--accent-yellow); color: #1A1A1A; padding: 18px 30px;
+                        border-radius: 20px; font-weight: 700; font-size: 1rem; z-index: 99999;
+                        box-shadow: 0 10px 40px rgba(255,208,40,0.4); font-family: 'Outfit', sans-serif;
+                        animation: fadeUp 0.5s ease both;
+                    `;
+                    document.body.appendChild(toast);
+                    setTimeout(() => {
+                        toast.style.opacity = '0';
+                        toast.style.transform = 'translateX(-50%) translateY(20px)';
+                        toast.style.transition = '0.5s';
+                        setTimeout(() => toast.remove(), 500);
+                    }, 4000);
+                    
+                    // Reset after 10 seconds
+                    setTimeout(() => document.body.classList.remove('easter-egg-active'), 10000);
+                    konamiIndex = 0;
+                }
+            } else {
+                konamiIndex = 0;
+            }
+        });
+
+        // --- 9. Scroll Progress Indicator ---
+        (function() {
+            const progressBar = document.createElement('div');
+            progressBar.id = 'scroll-progress';
+            progressBar.style.cssText = `
+                position: fixed; top: 0; left: 0; height: 3px; z-index: 10001;
+                background: linear-gradient(90deg, var(--accent-yellow), #FF6B35);
+                width: 0%; transition: width 0.1s linear; pointer-events: none;
+            `;
+            document.body.appendChild(progressBar);
+            
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.scrollY;
+                const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const progress = (scrollTop / docHeight) * 100;
+                progressBar.style.width = progress + '%';
+            });
+        })();
+
+        console.log('🚀 Interactive Enhancements Engine loaded.');
     </script>
 </body>
 </html>
