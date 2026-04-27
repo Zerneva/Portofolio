@@ -1069,262 +1069,8 @@
             .box-education { grid-column: span 2; display: flex; flex-direction: column; align-items: flex-start; }
             .box-contact { grid-column: span 2; }
             .box-cert { grid-column: span 2; }
+            .box-organization { grid-column: span 2; }
             .projects-grid { grid-template-columns: repeat(2, 1fr); }
-            /* insta grid handled in 768px mobile block below */
-        }
-
-        @media (max-width: 768px) {
-            /* === GLOBAL MOBILE OVERFLOW FIX === */
-            html, body { overflow-x: hidden !important; width: 100% !important; }
-
-            /* === PRELOADER MOBILE === */
-            .blueprint-container { width: 95%; height: 85%; padding: 20px; }
-            .blueprint-main-text .word { font-size: clamp(2rem, 8vw, 3.5rem); letter-spacing: -1px; }
-            .dimension-line { width: 200px; }
-            .sketch-label { font-size: 9px; }
-            .blueprint-footer { padding: 0 20px; font-size: 8px; }
-
-            /* === SIDEBAR / NAV === */
-            .sidebar {
-                width: 100%; height: 80px; flex-direction: row; align-items: center; justify-content: flex-start; padding: 0 25px; border-right: none; border-bottom: 1px solid var(--border-color); z-index: 1000;
-            }
-            .logo-mark { order: 1; margin-bottom: 0; }
-            .theme-toggle { order: 2; margin-top: 0; margin-left: auto; margin-right: 15px; height: 45px; width: 45px; }
-            .mobile-nav-toggle { order: 3; display: block; font-size: 1.8rem; cursor: pointer; color: var(--text-dark); margin-top: 5px; }
-            
-            .nav-links { 
-                position: fixed; top: 80px; left: 0; width: 100%; background: var(--card-white);
-                padding: 20px; flex-direction: row; justify-content: center; transform: translateY(-20px); opacity: 0; visibility: hidden;
-                transition: all 0.3s ease-out; z-index: 999; border-bottom: 1px solid var(--border-color); box-shadow: var(--shadow-light);
-            }
-            .nav-links.active { transform: translateY(0); opacity: 1; visibility: visible; }
-            
-            /* === MAIN CONTENT === */
-            .main-content { margin-left: 0; width: 100%; padding: 100px 5% 40px; max-width: 100%; }
-            
-            /* === HERO SECTION === */
-            .hero-top { flex-direction: column; text-align: center; gap: 30px; min-height: auto; padding-top: 10px; }
-            .hero-title h1 { font-size: clamp(2.2rem, 9vw, 2.8rem); line-height: 1.1; letter-spacing: -2px; }
-            .hero-title p { margin: 0 auto; font-size: 0.95rem; padding: 0 5px; }
-            .hero-actions { justify-content: center; gap: 10px; flex-wrap: wrap; }
-            .btn { padding: 12px 24px; font-size: 0.9rem; }
-
-            /* === HERO VISUAL === */
-            .hero-visual { 
-                padding: 20px 0 20px; 
-                width: 100%; 
-                margin-top: 20px; 
-                position: relative; 
-                overflow: visible; /* Allow cards to show outside */
-            }
-            .hero-bg-text { display: none; } /* Huge text causes overflow on mobile */
-            
-            .me-photo-wrapper { max-width: 280px; margin: 0 auto; position: relative; overflow: visible; }
-            
-            /* Clean up redundant mobile specific overrides - use desktop positions but scale overall container */
-            .hero-floating-card, .expertise-pill { 
-                transform: scale(0.65) !important; /* Scale elements down uniformly */
-            }
-
-            .card-location { top: 0%; right: -60px; left: auto; bottom: auto; padding: 12px 18px !important; }
-            .card-stats { bottom: 5%; left: -25px; right: auto; top: auto; padding: 12px 18px !important; }
-
-
-
-            .expertise-pill { transform: scale(0.6) !important; }
-            .pill-1 { top: 35%; left: -40px !important; right: auto !important; }
-            .pill-2 { top: 60%; right: -50px !important; left: auto !important; }
-            .pill-3 { bottom: 15%; right: 10% !important; left: auto !important; }
-            
-            /* Restored & Visible Tech Icons */
-            .tech-icon-bg { display: block; font-size: 2rem; opacity: 0.15; z-index: 1; }
-            .tech-1 { top: 8%; left: 5%; }
-            .tech-2 { top: 75%; left: 0%; }
-            .tech-3 { top: 12%; right: 5%; }
-            .tech-4 { top: 82%; right: 0%; }
-
-            .rotating-badge { display: block; transform: scale(0.55); top: -55px; right: -25px; }
-            
-            .scroll-indicator { display: none; }
-            .card-achievement { display: none; }
-            
-            /* === BENTO GRID === */
-            .bento-grid { grid-template-columns: 1fr; gap: 15px; margin-bottom: 60px; }
-            .bento-box { border-radius: 25px; padding: 25px; }
-            .bento-box h2 { font-size: 1.6rem; margin-bottom: 20px; gap: 10px; }
-            .bento-box p { font-size: 1rem; }
-            .box-experience, .box-about, .box-skills, .box-education, .box-contact, .box-cert { grid-column: span 1; }
-            
-            /* === PROJECTS === */
-            .section-header { font-size: clamp(2rem, 6vw, 3rem); margin-bottom: 30px; letter-spacing: -1px; }
-            .projects-grid { grid-template-columns: 1fr; gap: 15px; margin-bottom: 60px; }
-            .project-card { border-radius: 20px; }
-            .project-img { height: 180px; }
-            .project-info { padding: 20px; }
-            .project-info h3 { font-size: 1.2rem; }
-            
-            /* === EXPERTISE === */
-            .expertise-list { gap: 12px; margin-bottom: 60px; }
-            .expertise-item { padding: 25px; border-radius: 25px; flex-direction: column; align-items: flex-start; gap: 10px; }
-            .exp-left { flex-direction: column; align-items: flex-start; gap: 10px; }
-            .exp-num { font-size: 1.8rem; }
-            .exp-info h3 { font-size: 1.5rem; letter-spacing: 0; }
-            .exp-info p { font-size: 0.95rem; }
-            .expertise-item:hover { transform: translateY(-3px); }
-            .exp-icon { display: none; }
-            
-            /* === MOBILE SCROLL STACK === */
-            .scroll-stack-scroller {
-                position: relative;
-                width: 100%;
-            }
-            .scroll-stack-end {
-                width: 100%;
-                height: 1px;
-            }
-
-            /* --- Instagram & Pinterest: single-column on mobile --- */
-            .insta-grid, .pint-grid { 
-                display: flex !important; 
-                flex-direction: column !important;
-                gap: 20px !important;
-            }
-            .scroll-stack-card-wrapper {
-                width: 100%;
-            }
-            .insta-item {
-                aspect-ratio: 3 / 4;
-                width: 100% !important;
-                max-width: 100% !important;
-                border-radius: 20px;
-            }
-            .pint-item {
-                aspect-ratio: 9 / 16;
-                width: 100% !important;
-                max-width: 100% !important;
-                border-radius: 20px;
-            }
-            .scroll-stack-card {
-                transform-origin: top center;
-                will-change: transform, filter;
-                backface-visibility: hidden;
-                width: 100%;
-                box-sizing: border-box;
-            }
-
-            /* Always show overlay badges on mobile (no hover on touch) */
-            .insta-overlay, .pint-overlay {
-                opacity: 1 !important;
-                bottom: 10px;
-                width: 38px; height: 38px;
-            }
-            .insta-overlay i, .pint-overlay i { font-size: 1rem; }
-
-            /* Container padding adjustments */
-            .insta-container, .pinterest-container {
-                padding: 25px;
-                border-radius: 25px;
-                margin-bottom: 40px;
-            }
-            .insta-header, .pint-header {
-                margin-bottom: 25px;
-            }
-            .insta-header h2, .pint-header h2 {
-                font-size: 1.6rem;
-            }
-            .insta-header .btn, .pint-header .btn {
-                padding: 10px 18px;
-                font-size: 0.85rem;
-            }
-            
-
-            
-            /* === FOOTER === */
-            .footer-section { padding: 40px 5% 35px; border-radius: 25px; }
-            .footer-title { font-size: clamp(1.8rem, 5vw, 2.5rem); }
-            .footer-desc { font-size: 0.95rem; }
-            .social-btn { width: 50px; height: 50px; font-size: 1.2rem; }
-            
-            /* === FLOATING WHATSAPP === */
-            .float-wa { bottom: 20px; right: 20px; width: 55px; height: 55px; font-size: 1.8rem; }
-            
-            /* === MODALS === */
-            .modal-content { width: 95%; border-radius: 20px; }
-            .modal-img { height: 220px; }
-            .modal-body { padding: 25px; }
-            .modal-body h2 { font-size: 1.5rem; }
-            
-            /* === RIGHT SIDEBAR → MOBILE BOTTOM BAR === */
-            .right-sidebar { 
-                display: flex !important;
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: auto;
-                top: auto;
-                width: 100%;
-                flex-direction: row;
-                align-items: center;
-                justify-content: center;
-                gap: 0;
-                padding: 12px 30px;
-                background: transparent;
-                border-top: none;
-                box-shadow: none;
-                transform: none;
-                z-index: 999;
-            }
-            /* Dots on left and right */
-            .right-sidebar::before {
-                content: '';
-                position: absolute;
-                left: 20px;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 6px; height: 6px;
-                background: var(--text-dark);
-                border-radius: 50%;
-                display: block;
-            }
-            .right-sidebar::after {
-                content: '';
-                position: absolute;
-                right: 20px;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 6px; height: 6px;
-                background: var(--text-dark);
-                border-radius: 50%;
-                display: block;
-            }
-            .right-sidebar-node { display: none; }
-            .right-sidebar.hide { 
-                transform: translateY(150px) !important; 
-                opacity: 0 !important; 
-                pointer-events: none !important; 
-            }
-
-            .social-link-vert {
-                width: 38px; height: 38px;
-                font-size: 0.95rem;
-                border: none;
-            }
-
-            /* Add bottom padding to body for the bar */
-            .main-content { padding-bottom: 70px !important; }
-            .float-wa { bottom: 65px; } /* Move WA above the bar */
-        }
-
-        /* === EXTRA SMALL SCREENS (iPhone SE, 320px etc) === */
-        @media (max-width: 380px) {
-            .main-content { padding: 90px 4% 30px; }
-            .hero-title h1 { font-size: 2rem; }
-            .btn { padding: 11px 20px; font-size: 0.85rem; }
-
-            .bento-box { padding: 20px; border-radius: 20px; }
-            .bento-box h2 { font-size: 1.4rem; }
-            .expertise-item { padding: 20px; }
-            .exp-info h3 { font-size: 1.3rem; }
         }
 
         /* === INTERACTIVE ENHANCEMENTS === */
@@ -1443,8 +1189,528 @@
         }
 
         /* --- Social Button Tooltip --- */
-        .social-btn {
+        .social-btn:hover::after {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        /* === MOBILE RESPONSIVE FINAL OVERRIDES === */
+        @media screen and (max-width: 768px) {
+            /* === GLOBAL MOBILE OVERFLOW FIX === */
+            html, body { overflow-x: hidden !important; width: 100% !important; position: relative; }
+            
+            /* Disable reveal transforms on mobile to prevent layout overlap */
+            .reveal { 
+                opacity: 1 !important; 
+                transform: none !important; 
+                visibility: visible !important;
+                transition: none !important;
+            }
+
+            /* === PRELOADER MOBILE === */
+            .blueprint-container { width: 95%; height: 85%; padding: 20px; }
+            .blueprint-main-text .word { font-size: clamp(2rem, 8vw, 3.5rem); letter-spacing: -1px; }
+            .dimension-line { width: 200px; }
+            .sketch-label { font-size: 9px; }
+            .blueprint-footer { padding: 0 20px; font-size: 8px; }
+
+            /* === SIDEBAR / NAV === */
+            .sidebar {
+                width: 100%; height: 80px; flex-direction: row; align-items: center; justify-content: flex-start; padding: 0 25px; border-right: none; border-bottom: 1px solid var(--border-color); z-index: 1000;
+            }
+            .logo-mark { order: 1; margin-bottom: 0; }
+            .theme-toggle { order: 2; margin-top: 0; margin-left: auto; margin-right: 15px; height: 45px; width: 45px; }
+            .mobile-nav-toggle { order: 3; display: block; font-size: 1.8rem; cursor: pointer; color: var(--text-dark); margin-top: 5px; }
+            
+            .nav-links { 
+                position: fixed; top: 80px; left: 0; width: 100%; background: var(--card-white);
+                padding: 20px; flex-direction: row; justify-content: center; transform: translateY(-20px); opacity: 0; visibility: hidden;
+                transition: all 0.3s ease-out; z-index: 999; border-bottom: 1px solid var(--border-color); box-shadow: var(--shadow-light);
+            }
+            .nav-links.active { transform: translateY(0); opacity: 1; visibility: visible; }
+            
+            /* === MAIN CONTENT === */
+            .main-content { margin-left: 0; width: 100%; padding: 100px 5% 40px; max-width: 100%; }
+            
+            /* === HERO SECTION === */
+            .hero-top { flex-direction: column; text-align: center; gap: 30px; min-height: auto; padding-top: 10px; }
+            .hero-title h1 { font-size: clamp(2.2rem, 9vw, 2.8rem); line-height: 1.1; letter-spacing: -2px; }
+            .hero-title p { margin: 0 auto; font-size: 0.95rem; padding: 0 5px; }
+            .hero-actions { justify-content: center; gap: 10px; flex-wrap: wrap; }
+            .btn { padding: 12px 24px; font-size: 0.9rem; }
+
+            /* === HERO VISUAL === */
+            .hero-visual { 
+                padding: 20px 0 20px; 
+                width: 100%; 
+                margin-top: 20px; 
+                position: relative; 
+                overflow: visible; 
+            }
+            .hero-bg-text { display: none; } 
+            
+            .me-photo-wrapper { max-width: 280px; margin: 0 auto; position: relative; overflow: visible; }
+            
+            .hero-floating-card, .expertise-pill { transform: scale(0.65) !important; }
+            .card-location { top: 0%; right: -20px; left: auto; bottom: auto; padding: 12px 18px !important; }
+            .card-stats { bottom: 5%; left: -10px; right: auto; top: auto; padding: 12px 18px !important; }
+            .expertise-pill { transform: scale(0.6) !important; }
+            .pill-1 { top: 35%; left: 0px !important; right: auto !important; }
+            .pill-2 { top: 60%; right: 0px !important; left: auto !important; }
+            .pill-3 { bottom: 15%; right: 5px !important; left: auto !important; }
+            
+            /* === BENTO GRID - STACKING FORCE === */
+            section#about.bento-grid { 
+                display: flex !important; 
+                flex-direction: column !important; 
+                gap: 20px !important; 
+                width: 100% !important;
+                padding: 0 !important;
+            }
+            .bento-box { 
+                width: 100% !important;
+                max-width: 100% !important;
+                border-radius: 25px; 
+                padding: 25px;
+                grid-column: auto !important; 
+                grid-row: auto !important; 
+                box-sizing: border-box;
+                position: relative !important;
+                left: 0 !important;
+                right: 0 !important;
+                transform: none !important;
+            }
+            .bento-box h2 { font-size: 1.6rem; margin-bottom: 20px; gap: 10px; }
+            .bento-box p { font-size: 1rem; }
+            .box-experience, .box-about, .box-skills, .box-education, .box-contact, .box-cert, .box-organization { 
+                width: 100% !important; 
+                grid-column: auto !important; 
+                grid-row: auto !important; 
+            }
+            
+            .box-education { flex-direction: column; align-items: flex-start; gap: 20px; }
+            .edu-item { width: 100%; }
+            
+            /* === PROJECTS === */
+            .section-header { font-size: clamp(2rem, 6vw, 3rem); margin-bottom: 30px; letter-spacing: -1px; }
+            .projects-grid { grid-template-columns: 1fr; gap: 15px; margin-bottom: 60px; }
+            .project-card { border-radius: 20px; }
+            .project-img { height: 180px; }
+            .project-info { padding: 20px; }
+            .project-info h3 { font-size: 1.2rem; }
+            
+            /* === EXPERTISE === */
+            .expertise-list { gap: 12px; margin-bottom: 60px; }
+            .expertise-item { padding: 25px; border-radius: 25px; flex-direction: column; align-items: flex-start; gap: 10px; }
+            .exp-left { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .exp-num { font-size: 1.8rem; }
+            .exp-info h3 { font-size: 1.5rem; letter-spacing: 0; }
+            .exp-info p { font-size: 0.95rem; }
+            .expertise-item:hover { transform: translateY(-3px); }
+            .exp-icon { display: none; }
+            
+            /* === MOBILE SCROLL STACK === */
+            .scroll-stack-scroller {
+                position: relative;
+                width: 100%;
+            }
+            .scroll-stack-end {
+                width: 100%;
+                height: 1px;
+            }
+
+            /* --- Instagram & Pinterest: single-column on mobile --- */
+            .insta-grid, .pint-grid { 
+                display: flex !important; 
+                flex-direction: column !important;
+                gap: 20px !important;
+            }
+            .scroll-stack-card-wrapper {
+                width: 100%;
+            }
+            .insta-item {
+                aspect-ratio: 3 / 4;
+                width: 100% !important;
+                max-width: 100% !important;
+                border-radius: 20px;
+            }
+            .pint-item {
+                aspect-ratio: 9 / 16;
+                width: 100% !important;
+                max-width: 100% !important;
+                border-radius: 20px;
+            }
+            .scroll-stack-card {
+                transform-origin: top center;
+                will-change: transform, filter;
+                backface-visibility: hidden;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            /* Always show overlay badges on mobile (no hover on touch) */
+            .insta-overlay, .pint-overlay {
+                opacity: 1 !important;
+                bottom: 10px;
+                width: 38px; height: 38px;
+            }
+            .insta-overlay i, .pint-overlay i { font-size: 1rem; }
+
+            /* Container padding adjustments */
+            .insta-container, .pinterest-container {
+                padding: 25px;
+                border-radius: 25px;
+                margin-bottom: 40px;
+            }
+            .insta-header, .pint-header {
+                margin-bottom: 25px;
+            }
+            .insta-header h2, .pint-header h2 {
+                font-size: 1.6rem;
+            }
+            .insta-header .btn, .pint-header .btn {
+                padding: 10px 18px;
+                font-size: 0.85rem;
+            }
+            
+            /* === FOOTER === */
+            .footer-section { padding: 40px 5% 35px; border-radius: 25px; }
+            .footer-title { font-size: clamp(1.8rem, 5vw, 2.5rem); }
+            .footer-desc { font-size: 0.95rem; }
+            .social-btn { width: 50px; height: 50px; font-size: 1.2rem; }
+            
+            /* === FLOATING WHATSAPP === */
+            .float-wa { bottom: 20px; right: 20px; width: 55px; height: 55px; font-size: 1.8rem; }
+            
+            /* === MODALS === */
+            .modal-content { width: 95%; border-radius: 20px; }
+            .modal-img { height: 220px; }
+            .modal-body { padding: 25px; }
+            .modal-body h2 { font-size: 1.5rem; }
+            
+            /* === RIGHT SIDEBAR → MOBILE BOTTOM BAR === */
+            .right-sidebar { 
+                display: flex !important;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                top: auto;
+                width: 100%;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                gap: 5px;
+                padding: 12px 15px;
+                background: var(--card-white);
+                border-top: 1px solid var(--border-color);
+                box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+                transform: none;
+                z-index: 999;
+                box-sizing: border-box;
+                overflow: hidden;
+            }
+            /* Dots on left and right */
+            .right-sidebar::before {
+                content: '';
+                position: absolute;
+                left: 20px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 6px; height: 6px;
+                background: var(--text-dark);
+                border-radius: 50%;
+                display: block;
+            }
+            .right-sidebar::after {
+                content: '';
+                position: absolute;
+                right: 20px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 6px; height: 6px;
+                background: var(--text-dark);
+                border-radius: 50%;
+                display: block;
+            }
+            .right-sidebar-node { display: none; }
+            .right-sidebar.hide { 
+                transform: translateY(150px) !important; 
+                opacity: 0 !important; 
+                pointer-events: none !important; 
+            }
+
+            .social-link-vert {
+                width: 38px; height: 38px;
+                font-size: 0.95rem;
+                border: none;
+            }
+
+            /* Add bottom padding to body for the bar */
+            .main-content { padding-bottom: 70px !important; }
+            .float-wa { bottom: 65px; } /* Move WA above the bar */
+        }
+
+        /* === EXTRA SMALL SCREENS (iPhone SE, 320px etc) === */
+        @media (max-width: 380px) {
+            .main-content { padding: 90px 4% 30px; }
+            .hero-title h1 { font-size: 2rem; }
+            .btn { padding: 11px 20px; font-size: 0.85rem; }
+
+            .bento-box { padding: 20px; border-radius: 20px; }
+            .bento-box h2 { font-size: 1.4rem; }
+            .expertise-item { padding: 20px; }
+            .exp-info h3 { 
+                position: relative;
+                overflow: hidden;
+                font-size: 1.3rem; 
+            }
+        }
+        .btn .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.4);
+            transform: scale(0);
+            animation: ripple-anim 0.6s ease-out;
+            pointer-events: none;
+        }
+        @keyframes ripple-anim {
+            to { transform: scale(4); opacity: 0; }
+        }
+
+        /* --- Skill Icon 3D Flip --- */
+        .skill-icon {
+            perspective: 600px;
+            cursor: pointer;
             position: relative;
+        }
+        .skill-icon-inner {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            position: relative;
+        }
+        .skill-icon.flipped .skill-icon-inner {
+            transform: rotateY(180deg);
+        }
+
+        /* --- Expertise Accordion (Mobile Touch) --- */
+        .expertise-item .exp-desc-expand {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s;
+            padding: 0;
+        }
+        .expertise-item.expanded .exp-desc-expand {
+            max-height: 200px;
+            padding-top: 15px;
+        }
+
+        /* --- Counter Animation Number Glow --- */
+        .counter-value {
+            display: inline-block;
+            transition: color 0.3s;
+        }
+        .counter-value.counting {
+            color: var(--accent-yellow);
+            text-shadow: 0 0 20px rgba(255, 208, 40, 0.4);
+        }
+
+        /* --- Bento Box Hover Glow Border --- */
+        .bento-box {
+            transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+        .bento-box:hover {
+            border-color: var(--accent-yellow);
+            box-shadow: 0 20px 60px rgba(255, 208, 40, 0.08), var(--shadow-light);
+        }
+        [data-theme="dark"] .bento-box:hover {
+            box-shadow: 0 20px 60px rgba(255, 208, 40, 0.06);
+        }
+
+        /* --- Section Header Text Shimmer on Scroll --- */
+        .section-header {
+            background: linear-gradient(
+                90deg,
+                var(--text-dark) 0%,
+                var(--text-dark) 40%,
+                var(--accent-yellow) 50%,
+                var(--text-dark) 60%,
+                var(--text-dark) 100%
+            );
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: none;
+        }
+        .section-header.active {
+            animation: shimmer-text 3s ease-in-out 1;
+        }
+        @keyframes shimmer-text {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* --- Project Card "View" Prompt on Hover --- */
+        .project-card::after {
+            content: 'View Details →';
+            position: absolute;
+            bottom: 20px;
+            right: 25px;
+            background: var(--accent-yellow);
+            color: #1A1A1A;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 5;
+            pointer-events: none;
+        }
+        .project-card:hover::after {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Social Button Tooltip --- */
+        .social-btn:hover::after {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        /* === MOBILE RESPONSIVE FINAL OVERRIDES === */
+        @media screen and (max-width: 768px) {
+            /* === GLOBAL MOBILE OVERFLOW FIX === */
+            html, body { overflow-x: hidden !important; width: 100% !important; position: relative; }
+            
+            /* Disable reveal transforms on mobile to prevent layout overlap */
+            .reveal { 
+                opacity: 1 !important; 
+                transform: none !important; 
+                visibility: visible !important;
+                transition: none !important;
+            }
+
+            /* === PRELOADER MOBILE === */
+            .blueprint-container { width: 95%; height: 85%; padding: 20px; }
+            .blueprint-main-text .word { font-size: clamp(2rem, 8vw, 3.5rem); letter-spacing: -1px; }
+            .dimension-line { width: 200px; }
+            .sketch-label { font-size: 9px; }
+            .blueprint-footer { padding: 0 20px; font-size: 8px; }
+
+            /* === SIDEBAR / NAV === */
+            .sidebar {
+                width: 100%; height: 80px; flex-direction: row; align-items: center; justify-content: flex-start; padding: 0 25px; border-right: none; border-bottom: 1px solid var(--border-color); z-index: 1000;
+            }
+            .logo-mark { order: 1; margin-bottom: 0; }
+            .theme-toggle { order: 2; margin-top: 0; margin-left: auto; margin-right: 15px; height: 45px; width: 45px; }
+            .mobile-nav-toggle { order: 3; display: block; font-size: 1.8rem; cursor: pointer; color: var(--text-dark); margin-top: 5px; }
+            
+            .nav-links { 
+                position: fixed; top: 80px; left: 0; width: 100%; background: var(--card-white);
+                padding: 20px; flex-direction: row; justify-content: center; transform: translateY(-20px); opacity: 0; visibility: hidden;
+                transition: all 0.3s ease-out; z-index: 999; border-bottom: 1px solid var(--border-color); box-shadow: var(--shadow-light);
+            }
+            .nav-links.active { transform: translateY(0); opacity: 1; visibility: visible; }
+            
+            /* === MAIN CONTENT === */
+            .main-content { margin-left: 0; width: 100%; padding: 100px 5% 40px; max-width: 100%; }
+            
+            /* === HERO SECTION === */
+            .hero-top { flex-direction: column; text-align: center; gap: 30px; min-height: auto; padding-top: 10px; }
+            .hero-title h1 { font-size: clamp(2.2rem, 9vw, 2.8rem); line-height: 1.1; letter-spacing: -2px; }
+            .hero-title p { margin: 0 auto; font-size: 0.95rem; padding: 0 5px; }
+            .hero-actions { justify-content: center; gap: 10px; flex-wrap: wrap; }
+            .btn { padding: 12px 24px; font-size: 0.9rem; }
+
+            /* === HERO VISUAL === */
+            .hero-visual { 
+                padding: 20px 0 20px; 
+                width: 100%; 
+                margin-top: 20px; 
+                position: relative; 
+                overflow: visible; 
+            }
+            .hero-bg-text { display: none; } 
+            
+            .me-photo-wrapper { max-width: 280px; margin: 0 auto; position: relative; overflow: visible; }
+            
+            .hero-floating-card, .expertise-pill { transform: scale(0.65) !important; }
+            .card-location { top: 0%; right: -20px; left: auto; bottom: auto; padding: 12px 18px !important; }
+            .card-stats { bottom: 5%; left: -10px; right: auto; top: auto; padding: 12px 18px !important; }
+            .expertise-pill { transform: scale(0.6) !important; }
+            .pill-1 { top: 35%; left: 0px !important; right: auto !important; }
+            .pill-2 { top: 60%; right: 0px !important; left: auto !important; }
+            .pill-3 { bottom: 15%; right: 5px !important; left: auto !important; }
+            
+            /* === BENTO GRID - STACKING FORCE === */
+            section#about.bento-grid { 
+                display: flex !important; 
+                flex-direction: column !important; 
+                gap: 20px !important; 
+                width: 100% !important;
+                padding: 0 !important;
+            }
+            .bento-box { 
+                width: 100% !important;
+                max-width: 100% !important;
+                border-radius: 25px; 
+                padding: 25px; 
+                grid-column: auto !important; 
+                grid-row: auto !important; 
+                box-sizing: border-box;
+                position: relative !important;
+                display: block !important;
+                float: none !important;
+                transform: none !important;
+                left: auto !important;
+                right: auto !important;
+                top: auto !important;
+                bottom: auto !important;
+                margin-bottom: 20px !important;
+            }
+            .box-experience, .box-about, .box-skills, .box-education, .box-contact, .box-cert, .box-organization { 
+                width: 100% !important; 
+                grid-column: auto !important; 
+                grid-row: auto !important; 
+            }
+            .box-education { display: flex !important; flex-direction: column !important; align-items: flex-start !important; gap: 20px !important; }
+            
+            /* === FOOTER & SIDEBARS === */
+            .right-sidebar { 
+                display: flex !important;
+                position: fixed;
+                bottom: 15px; left: 50%; right: auto;
+                width: auto;
+                transform: translateX(-50%) !important;
+                flex-direction: row;
+                background: rgba(255, 255, 255, 0.05) !important;
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                border-radius: 40px !important;
+                z-index: 999;
+                box-sizing: border-box;
+                padding: 8px 12px !important;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+            }
+            .right-sidebar::before, .right-sidebar::after { display: none !important; }
+            .social-link-vert { 
+                background: rgba(0,0,0,0.8); 
+                margin: 0 4px; 
+                border-radius: 50%;
+                border: none !important;
+            }
+            .main-content { padding-bottom: 80px !important; }
+            .float-wa { bottom: 85px !important; }
+        }
+
+        @media (max-width: 380px) {
+            .main-content { padding: 90px 4% 30px; }
+            .hero-title h1 { font-size: 2rem; }
+            .bento-box { padding: 20px; }
         }
         .social-btn::before {
             content: attr(title);
@@ -1701,7 +1967,7 @@
             </div>
             
             <!-- Box 7: Leadership DPM -->
-            <div class="bento-box box-organization reveal" style="grid-column: span 2;">
+            <div class="bento-box box-organization reveal">
                 <h2><i class="fas fa-tower-broadcast" style="color: var(--accent-yellow);"></i> Leadership</h2>
                 <div class="exp-detail">
                     <span class="date" style="background: rgba(128,128,128,0.1); padding: 5px 12px; border-radius: 15px; font-size: 0.85rem; font-weight: 700; display: inline-block; margin-bottom: 8px;">Jan 2022 - Dec 2022</span>
@@ -1725,7 +1991,7 @@
             </div>
 
             <!-- Box 8: Leadership Hokusei -->
-            <div class="bento-box box-organization reveal" style="grid-column: span 2;">
+            <div class="bento-box box-organization reveal">
                 <h2><i class="fas fa-torii-gate" style="color: var(--accent-yellow);"></i> Organization</h2>
                 <div class="exp-detail">
                     <span class="date" style="background: rgba(128,128,128,0.1); padding: 5px 12px; border-radius: 15px; font-size: 0.85rem; font-weight: 700; display: inline-block; margin-bottom: 8px;">Jan 2022 - Dec 2022</span>
@@ -2294,6 +2560,7 @@
         
         // 1. Parallax Elements
         window.addEventListener('scroll', () => {
+            if (window.innerWidth <= 768) return; // Disable on mobile to prevent layout shifts
             const scrolled = window.pageYOffset;
             const parallaxElements = document.querySelectorAll('[data-speed]');
             parallaxElements.forEach(el => {
@@ -2413,13 +2680,14 @@
             if (window.innerWidth > 768) return;
 
             const config = {
-                itemScale: 0.03,
-                itemStackDistance: 25,
-                stackPosition: 0.15,   // 15% of viewport
-                scaleEndPosition: 0.05, // 5% of viewport
-                baseScale: 0.9,
-                blurAmount: 2,
-                lerpSpeed: 0.18        // Smoothing factor (0 = frozen, 1 = instant)
+                stackPosition: 0.12,    // 12% from top of viewport — where cards pin
+                maxStagger: 18,          // Max px offset between stacked cards (tight = premium)
+                maxScaleDrop: 0.12,      // Deepest card scales to 1 - 0.12 = 0.88
+                maxBlur: 6,              // Max blur in px for buried cards
+                maxBrightness: 0.35,     // Max brightness drop (0 = no dimming, 1 = black)
+                maxShadow: 30,           // Max shadow spread in px for depth
+                lerpSpeed: 0.22,         // Smoothing factor (higher = snappier)
+                snapThreshold: 0.05      // Snap to target below this diff
             };
 
             // --- Build per-section data ---
@@ -2431,60 +2699,72 @@
                 if (!cards.length) return;
 
                 const cardData = Array.from(cards).map(() => ({
-                    // Current lerped values (what's actually rendered)
-                    currentY: 0,
-                    currentScale: 1,
-                    currentBlur: 0,
-                    // Target values (what we're lerping towards)
-                    targetY: 0,
-                    targetScale: 1,
-                    targetBlur: 0,
-                    // Cached original offset
+                    currentY: 0, currentScale: 1, currentBlur: 0, currentBright: 1,
+                    targetY: 0,  targetScale: 1,  targetBlur: 0,  targetBright: 1,
                     originalTop: 0
                 }));
 
-                sectionConfigs.push({ grid, cards, cardData, endPos: 0 });
+                sectionConfigs.push({ grid, cards, cardData });
             });
 
             if (!sectionConfigs.length) return;
 
-            let containerHeight = window.innerHeight;
-            let stackPositionPx = config.stackPosition * containerHeight;
-            let scaleEndPositionPx = config.scaleEndPosition * containerHeight;
+            let vh = window.innerHeight;
+            let stackPx = config.stackPosition * vh;
+
+            // --- Easing: easeOutCubic for natural deceleration ---
+            function easeOut(t) {
+                return 1 - Math.pow(1 - Math.min(Math.max(t, 0), 1), 3);
+            }
 
             // --- Measure original positions (strips transforms first) ---
             function updateCache() {
-                containerHeight = window.innerHeight;
-                stackPositionPx = config.stackPosition * containerHeight;
-                scaleEndPositionPx = config.scaleEndPosition * containerHeight;
+                vh = window.innerHeight;
+                stackPx = config.stackPosition * vh;
 
                 sectionConfigs.forEach(section => {
-                    // Strip transforms before measuring
                     section.cards.forEach(card => {
                         card.style.transform = 'none';
                         card.style.filter = 'none';
                     });
                 });
 
-                // Force single layout recalc
-                void document.body.offsetHeight;
+                void document.body.offsetHeight; // Force reflow
 
                 sectionConfigs.forEach(section => {
-                    // Measure clean positions
                     section.cards.forEach((card, i) => {
                         const rect = card.getBoundingClientRect();
                         section.cardData[i].originalTop = rect.top + window.scrollY;
                     });
                 });
 
-                // Immediately re-apply current lerped values (no visual flash)
+                // Re-apply current values immediately (no visual flash)
                 sectionConfigs.forEach(section => {
                     section.cards.forEach((card, i) => {
                         const d = section.cardData[i];
-                        card.style.transform = `translate3d(0,${d.currentY}px,0) scale(${d.currentScale})`;
-                        card.style.filter = d.currentBlur > 0.5 ? `blur(${d.currentBlur}px)` : 'none';
+                        applyCard(card, d);
                     });
                 });
+            }
+
+            // --- Apply visual state to a single card ---
+            function applyCard(card, d) {
+                card.style.transform = `translate3d(0,${d.currentY.toFixed(1)}px,0) scale(${d.currentScale.toFixed(4)})`;
+                
+                const filters = [];
+                if (d.currentBlur > 0.2) filters.push(`blur(${d.currentBlur.toFixed(1)}px)`);
+                if (d.currentBright < 0.98) filters.push(`brightness(${d.currentBright.toFixed(2)})`);
+                card.style.filter = filters.length ? filters.join(' ') : 'none';
+
+                // Dynamic drop-shadow for depth
+                const shadowIntensity = (1 - d.currentScale) * 5; // More scale-down = more shadow
+                const shadowSpread = Math.min(config.maxShadow, shadowIntensity * config.maxShadow);
+                const shadowAlpha = Math.min(0.25, shadowIntensity * 0.3);
+                if (shadowSpread > 1) {
+                    card.style.boxShadow = `0 ${shadowSpread.toFixed(0)}px ${(shadowSpread * 1.5).toFixed(0)}px rgba(0,0,0,${shadowAlpha.toFixed(2)})`;
+                } else {
+                    card.style.boxShadow = 'none';
+                }
             }
 
             // --- Calculate targets for one section ---
@@ -2492,52 +2772,68 @@
                 const { cards, cardData } = section;
                 if (!cards.length) return;
 
-                // The scroll position where the LAST card reaches stackPositionPx
                 const lastCardTop = cardData[cards.length - 1].originalTop;
-                const pinEnd = lastCardTop - stackPositionPx;
-
-                // Cap the scroll to pinEnd so the stack scrolls away naturally afterwards
-                // (This pulls the container's white background up with the cards!)
+                const pinEnd = lastCardTop - stackPx;
                 const effectiveScroll = Math.min(scrollTop, pinEnd);
+
+                // Find the index of the topmost active (pinned) card
+                let topCardIdx = -1;
+                for (let i = cards.length - 1; i >= 0; i--) {
+                    const trigger = cardData[i].originalTop - stackPx;
+                    if (effectiveScroll >= trigger) {
+                        topCardIdx = i;
+                        break;
+                    }
+                }
 
                 cardData.forEach((d, i) => {
                     const cardTop = d.originalTop;
-                    const triggerStart = cardTop - stackPositionPx;
+                    const triggerStart = cardTop - stackPx;
 
                     if (effectiveScroll < triggerStart) {
-                        // Card hasn't reached the stack yet
+                        // Card hasn't reached the stack yet — fully natural
                         d.targetY = 0;
                         d.targetScale = 1;
                         d.targetBlur = 0;
+                        d.targetBright = 1;
                     } else {
-                        // Card is pinned (or was pinned and is now scrolling away)
-                        const p = effectiveScroll - triggerStart; // How far we've scrolled past its pin point
-                        
-                        // Keep it pinned by pushing it down exactly 'p' pixels
-                        // Then subtract a small stagger to make older cards peek out at the top
-                        const stagger = (p / containerHeight) * 30;
+                        // Card is pinned
+                        const p = effectiveScroll - triggerStart;
+
+                        // --- Position: pin + stagger ---
+                        // The stagger creates a subtle offset so buried cards peek out
+                        const staggerProgress = easeOut(p / vh);
+                        const stagger = staggerProgress * config.maxStagger;
                         d.targetY = p - stagger;
 
-                        // Scale down smoothly as it gets buried
-                        const scaleDrop = (p / containerHeight) * 0.05;
-                        d.targetScale = Math.max(0.85, 1 - scaleDrop);
+                        // --- Depth effects based on how many cards are ABOVE this one ---
+                        const depth = Math.max(0, topCardIdx - i); // 0 = top card, 1 = one below, etc.
+                        const depthNorm = Math.min(depth / 4, 1);  // Normalize over 4 cards deep
+                        const depthEased = easeOut(depthNorm);
 
-                        // Blur smoothly as it gets buried
-                        const blurAmount = (p / containerHeight) * 5;
-                        d.targetBlur = Math.min(10, blurAmount);
+                        // Scale: top card = 1.0, deeper = smaller
+                        d.targetScale = 1 - depthEased * config.maxScaleDrop;
+
+                        // Blur: top card = 0, deeper = blurrier
+                        d.targetBlur = depthEased * config.maxBlur;
+
+                        // Brightness: top card = 1.0, deeper = dimmer
+                        d.targetBright = 1 - depthEased * config.maxBrightness;
                     }
+
+                    // Z-index: cards higher in the stack (later index) sit on top
+                    cards[i].style.zIndex = i + 1;
                 });
             }
 
             // --- Lerp helper ---
             function lerp(current, target, speed) {
                 const diff = target - current;
-                // Snap if very close (prevents infinite micro-updates)
-                if (Math.abs(diff) < 0.1) return target;
+                if (Math.abs(diff) < config.snapThreshold) return target;
                 return current + diff * speed;
             }
 
-            // --- Animation loop (runs every frame) ---
+            // --- Animation loop ---
             let running = true;
 
             function animate() {
@@ -2549,15 +2845,12 @@
                     calcTargets(section, scrollTop);
 
                     section.cardData.forEach((d, i) => {
-                        // Lerp towards targets
-                        d.currentY = lerp(d.currentY, d.targetY, config.lerpSpeed);
-                        d.currentScale = lerp(d.currentScale, d.targetScale, config.lerpSpeed);
-                        d.currentBlur = lerp(d.currentBlur, d.targetBlur, config.lerpSpeed);
+                        d.currentY     = lerp(d.currentY,     d.targetY,     config.lerpSpeed);
+                        d.currentScale = lerp(d.currentScale,  d.targetScale, config.lerpSpeed);
+                        d.currentBlur  = lerp(d.currentBlur,   d.targetBlur,  config.lerpSpeed);
+                        d.currentBright = lerp(d.currentBright, d.targetBright, config.lerpSpeed);
 
-                        // Apply to DOM
-                        const card = section.cards[i];
-                        card.style.transform = `translate3d(0,${d.currentY.toFixed(1)}px,0) scale(${d.currentScale.toFixed(3)})`;
-                        card.style.filter = d.currentBlur > 0.3 ? `blur(${d.currentBlur.toFixed(1)}px)` : 'none';
+                        applyCard(section.cards[i], d);
                     });
                 });
 
@@ -2565,16 +2858,13 @@
             }
 
             // --- Init ---
-            // Wait for images, then cache + start
             setTimeout(() => {
                 updateCache();
                 requestAnimationFrame(animate);
             }, 2000);
 
             // Re-cache on resize
-            window.addEventListener('resize', () => {
-                updateCache();
-            });
+            window.addEventListener('resize', () => updateCache());
 
             // Re-cache when lazy images finish loading
             sectionConfigs.forEach(section => {
