@@ -1,0 +1,34 @@
+name: Auto Refresh Instagram Token
+
+on:
+  schedule:
+    # Berjalan otomatis setiap tanggal 1 setiap bulannya jam 00:00 UTC (Bisa disesuaikan)
+    - cron: '0 0 1 * *'
+  workflow_dispatch: # Mengizinkan Anda menjalankan refresh secara manual lewat tombol di GitHub Actions
+
+jobs:
+  refresh-token:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Diperlukan agar bot bisa melakukan commit & push token baru
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        
+    - name: Run Token Refresh Script
+      run: php refresh_ig_token.php
+      
+    - name: Commit and Push new Token
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add ig_token.json token_refresh_log.txt
+        # Hanya commit jika ada token yang diperbarui
+        git commit -m "Auto-update Instagram Token via GitHub Actions" || echo "No changes to commit"
+        git push
