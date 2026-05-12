@@ -2341,10 +2341,14 @@
 
         // --- Fetch Instagram ---
         async function fetchInstagram() {
-            const token = 'IGAANHNBHeTvFBZAGJjNnc4ZAENtWTNMektacHlnM2Jrclk5cnZA0RF9HcGgxdkMxT3RiVXEwUm01VTdqZA05TNXhQSi04VEtPODlSamVaWDNhWktmTG1fdVQ0ajAxV0xZAZA2RzYlNMSEZAtVXJQMWJMZA1dSZAVpWOHE5WXRkbGpHUHpxTQZDZD';
             const grid = document.getElementById('insta-grid');
             
             try {
+                // Fetch dynamic token
+                const tokenRes = await fetch('ig_token.json?t=' + new Date().getTime());
+                const tokenData = await tokenRes.json();
+                const token = tokenData.token;
+
                 const response = await fetch(`https://graph.instagram.com/me/media?fields=id,media_type,media_url,thumbnail_url,permalink,caption&limit=8&access_token=${token}`);
                 
                 // Check if response is OK and is actually JSON
