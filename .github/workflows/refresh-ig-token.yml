@@ -28,7 +28,7 @@ jobs:
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git add ig_token.json token_refresh_log.txt
+        git add ig_token.json
         # Hanya commit jika ada token yang diperbarui
         git commit -m "Auto-update Instagram Token via GitHub Actions" || echo "No changes to commit"
         git push
